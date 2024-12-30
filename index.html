@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<script src="./scripts/app.js"></script>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Similarity App</title>
+  <!-- Link to JetBrains Mono via Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Link to Font Awesome for optional icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Link to the Tailwind CSS file -->
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body class="flex flex-col items-center bg-neutral-800 text-neutral-200 min-h-screen font-jetbrains">
+  <h1 class="text-white text-2xl p-10">celebalike.me</h1>
+
+  <h3 class="text-neutral-200 text-lg mb-6">Which celebrity do you look like?</h3>
+  
+  <!-- Upload Box -->
+  <div class="upload-box border-2 border-white bg-neutral-700 p-10 text-center w-96">
+    <form id="upload-form" class="flex flex-col items-center">
+      <input type="file" id="image-input" accept="image/*" required class="hidden">
+      <button type="submit" class="btn">Upload face to search</button>
+    </form>
+    <!-- Loading Spinner -->
+    <div class="spinner" id="upload-spinner" style="display: none;"></div>
+  </div>
+
+  <!-- Divider -->
+  <hr class="divider">
+
+  <!-- About Section -->
+  <h2 class="text-white text-xl mb-4">About</h2>
+  <ul class="list-disc pl-5">
+    <li>I hate my life</li>
+  </ul>
+  <hr class="divider">
+
+  <!-- Tech Stack Section -->
+  <h2 class="text-white text-xl mb-4">The Tech Stack</h2>
+  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-4xl">
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>Go & gRPC</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">Go and gRPC are used for building scalable and efficient APIs that handle communication between services.</p>
+      </div>
+    </li>
+    
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>DeepFace & Python</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">DeepFace and Python are leveraged for facial recognition and processing, enabling accurate face embeddings.</p>
+      </div>
+    </li>
+    
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>AWS</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">AWS provides the scalable infrastructure necessary to host and manage our application efficiently.</p>
+      </div>
+    </li>
+    
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>Kubernetes</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">Kubernetes orchestrates our containerized applications, ensuring high availability and scalability.</p>
+      </div>
+    </li>
+    
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>Milvus Vector Database</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">Milvus serves as our vector database, enabling efficient storage and retrieval of high-dimensional face embeddings.</p>
+      </div>
+    </li>
+    <li class="bg-neutral-700 p-4 rounded">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+        <span class="flex justify-between items-center">
+          <span>TailWind CSS</span>
+          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </button>
+      <div class="mt-2 hidden p-5">
+        <p class="text-gray-300">TailWind CSS provides utility-first classes that streamline our styling process, ensuring a consistent and responsive design.</p>
+      </div>
+    </li>
+    <!-- Add more items as needed -->
+  </ul>
+  <!-- Link to the JavaScript file -->
+  </body>
+</html>
+
