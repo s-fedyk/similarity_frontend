@@ -29,6 +29,23 @@
     <div class="spinner" id="upload-spinner" style="display: none;"></div>
   </div>
 
+  <div class="celebrity-switch-box bg-neutral-700 rounded w-96 mt-10 flex items-center relative">
+      <!-- Previous Button -->
+      <button id="prev-btn" class="prev-btn bg-gray-600 text-white p-2 hover:bg-gray-500 focus:outline-none h-full flex items-center justify-center">
+        &larr;
+      </button>
+
+      <!-- Celebrity Display Area -->
+      <div class="celebrity-display flex flex-col items-center flex-1 px-4">
+        <img src="https://images.pexels.com/photos/374631/pexels-photo-374631.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Celebrity One" class="celebrity-image w-48 h-48 object-cover shadow-md">
+      </div>
+
+      <!-- Next Button -->
+      <button id="next-btn" class="next-btn bg-gray-600 text-white p-2 hover:bg-gray-500 focus:outline-none h-full flex items-center justify-center">
+        &rarr;
+      </button>
+  </div>
+
   <!-- Divider -->
   <hr class="divider">
 
@@ -41,7 +58,7 @@
 
   <!-- Tech Stack Section -->
   <h2 class="text-white text-xl mb-4">The Tech Stack</h2>
-  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-4xl">
+  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-4xl pb-10">
     <li class="bg-neutral-700 p-4 rounded">
       <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
         <span class="flex justify-between items-center">

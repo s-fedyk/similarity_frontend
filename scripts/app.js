@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to handle expandable list items
   function setupExpandableList() {
     const expandableButtons = document.querySelectorAll('.expandable-button');
-    console.log("here")
 
     expandableButtons.forEach(button => {
       button.addEventListener('click', () => {
