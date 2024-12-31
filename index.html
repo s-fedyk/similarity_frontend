@@ -63,16 +63,44 @@
   <hr class="divider">
 
   <!-- About Section -->
-  <h2 class="text-white text-xl mb-4">About</h2>
-  <ul class="list-disc pl-5">
-    <li>Frontend is the bane of my existence</li>
-  </ul>
+  <h2 class="text-white text-xl mb-4">About (Me & The app)</h2>
+  <div class="w-4/5 max-w-5xl space-y-8 ">
+    <p class="text-gray-300 mb-6">
+      This is a full-stack, ML application written over the course of winter break to show off
+      my technical skills to recruiters.
+    </p>
+    <p class="text-gray-300 mb-6">
+      I am a software engineer studying computer science at the University of Alberta, due to 
+      graduate in May 2025. I primarily consider myself a backend engineer (if it is not
+      obvious through the simplicity of this web page).
+    </p>
+    <p class="text-gray-300 mb-6">
+      This application works by using a neural network to first detect the faces present in an image,
+      and then extract their mathematical representations (this representation is called 
+      an embedding). When you have access to many of these embeddings, there is a natural
+      notion of 'distance' between them.
+    </p>
+    <p class="text-gray-300 mb-6">
+      The next key component in the app is a vector database. A database offers a convenient
+      way to store and access some sort of structured data. A vector database is the same, 
+      except they are purpose built around aproximate nearest neighbour algorithms. These 
+      algorithms help us take advantage of the aforementioned notion of 'distance', 
+      searching a set of embeddings, and finding one that is (hopefully) similar to yours.
+    </p>
+    <p class="text-gray-300 mb-6">
+      This process and technology is similar to what a service like Netflix or Spotify could 
+      use in their recommendation systems. For example, if you like a certain song, 
+      Spotify would query its vector database of songs, and give you suggestions of 
+      songs which embeddings are located nearby. This is of course an over simplification, 
+      and their production recommendation systems are much more complicated than this.
+    </p>
+  </div>
   <hr class="divider">
 
   <!-- Tech Stack Section -->
   <h2 class="text-white text-xl mb-4">The Tech Stack</h2>
-  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-4xl pb-10">
-    <li class="bg-neutral-700 p-4 rounded">
+  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10">
+    <li class="bg-neutral-700 p-4 rounded ">
       <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="go-grpc-content">
         <span class="flex justify-between items-center">
           <span>Go & gRPC</span>

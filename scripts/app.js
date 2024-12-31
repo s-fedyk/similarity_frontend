@@ -1,6 +1,5 @@
 
 // scripts/app.js
-
 document.addEventListener('DOMContentLoaded', () => {
   const uploadForm = document.getElementById('upload-form');
   const imageInput = document.getElementById('image-input');
@@ -84,6 +83,98 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 50); // Duration should match the CSS transition duration
     }, 50); // Duration should match the CSS transition duration
   }
+
+
+  // Function to handle image upload
+  async function uploadImage(file) {
+    if (!file) {
+      showAlert('Please select an image to upload.', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      uploadSpinner.style.display = 'flex'; // Show spinner
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        showAlert('Image uploaded successfully!', 'success');
+        imageInput.value = ''; // Clear the input
+        fetchImages(); // Refresh the image gallery
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      showAlert(`Error uploading image: ${error.message}`, 'error');
+    } finally {
+      uploadSpinner.style.display = 'none'; // Hide spinner
+    }
+  }
+
+  // Function to show alert messages
+  function showAlert(message, type) {
+    // Create a message element
+    const messageElement = document.createElement('div');
+    if (type === 'success') {
+      messageElement.className = 'bg-green-500 text-white p-3 rounded mb-4 w-4/5 max-w-4xl';
+    } else if (type === 'error') {
+      messageElement.className = 'bg-red-500 text-white p-3 rounded mb-4 w-4/5 max-w-4xl';
+    }
+    messageElement.textContent = message;
+    uploadForm.prepend(messageElement);
+
+    // Remove the message after a certain time
+    const duration = type === 'success' ? 3000 : 5000;
+    setTimeout(() => {
+      messageElement.remove();
+    }, duration);
+  }
+
+  // Click Event to Trigger File Input
+  uploadBox.addEventListener('click', () => {
+    imageInput.click();
+  });
+
+  // Keyboard Accessibility: Trigger File Input on Enter or Space
+  uploadBox.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      imageInput.click();
+    }
+  });
+
+  // Drag and Drop Functionality
+  uploadBox.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    uploadBox.classList.add('border-indigo-500', 'bg-neutral-600');
+  });
+
+  uploadBox.addEventListener('dragleave', () => {
+    uploadBox.classList.remove('border-indigo-500', 'bg-neutral-600');
+  });
+
+  uploadBox.addEventListener('drop', (event) => {
+    event.preventDefault();
+    uploadBox.classList.remove('border-indigo-500', 'bg-neutral-600');
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      uploadImage(file);
+    }
+  });
+
+  // Change Event for File Input
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    uploadImage(file);
+  });
 
   // Event Listeners for Navigation Buttons
   prevBtn.addEventListener('click', () => {
