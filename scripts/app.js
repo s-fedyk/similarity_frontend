@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
           celebrityDisplay.classList.remove(slideClassIn);
         }
         isAnimating = false; // Animation complete
-      }, 500); // Duration should match the CSS transition duration
-    }, 500); // Duration should match the CSS transition duration
+      }, 50); // Duration should match the CSS transition duration
+    }, 50); // Duration should match the CSS transition duration
   }
 
   // Event Listeners for Navigation Buttons

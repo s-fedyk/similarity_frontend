@@ -1,8 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<script src="./scripts/app.js"></script>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,31 +18,46 @@
   <h3 class="text-neutral-200 text-lg mb-6">Which celebrity do you look like?</h3>
   
   <!-- Upload Box -->
-  <div class="upload-box border-2 border-white bg-neutral-700 p-10 text-center w-96">
+  <div class="upload-box border-2 border-white bg-neutral-700 p-10 text-center w-96 cursor-pointer relative transition-colors duration-300 hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="upload-box" tabindex="0" aria-label="Upload an image by clicking or dragging and dropping">
     <form id="upload-form" class="flex flex-col items-center">
       <input type="file" id="image-input" accept="image/*" required class="hidden">
-      <button type="submit" class="btn">Upload face to search</button>
+      <p class="text-neutral-300">
+        Drag and drop an image here<br />or click to select one
+      </p>
     </form>
     <!-- Loading Spinner -->
-    <div class="spinner" id="upload-spinner" style="display: none;"></div>
+    <div class="spinner absolute inset-0 flex items-center justify-center" id="upload-spinner" style="display: none;"></div>
   </div>
 
-  <div class="celebrity-switch-box bg-neutral-700 rounded w-96 mt-10 flex items-center relative">
-      <!-- Previous Button -->
-      <button id="prev-btn" class="prev-btn bg-gray-600 text-white p-2 hover:bg-gray-500 focus:outline-none h-full flex items-center justify-center">
-        &larr;
-      </button>
+  <!-- Celebrity Switch Box -->
+  <div class="celebrity-switch-box bg-neutral-700 rounded w-96 mt-10 grid grid-cols-3 items-center relative">
+  <!-- Previous Button -->
+  <button
+    id="prev-btn"
+    class="prev-btn bg-neutral-600 text-white hover:bg-neutral-500 focus:outline-none flex-1 h-full flex items-center justify-center w-full"
+    aria-label="Previous Celebrity"
+  >
+    &larr;
+  </button>
 
-      <!-- Celebrity Display Area -->
-      <div class="celebrity-display flex flex-col items-center flex-1 px-4">
-        <img src="https://images.pexels.com/photos/374631/pexels-photo-374631.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Celebrity One" class="celebrity-image w-48 h-48 object-cover shadow-md">
-      </div>
-
-      <!-- Next Button -->
-      <button id="next-btn" class="next-btn bg-gray-600 text-white p-2 hover:bg-gray-500 focus:outline-none h-full flex items-center justify-center">
-        &rarr;
-      </button>
+  <!-- Celebrity Display Area -->
+  <div class="celebrity-display flex flex-col items-center flex-none" >
+    <img
+      src="https://images.pexels.com/photos/374631/pexels-photo-374631.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+      alt="Celebrity One"
+      class="celebrity-image w-48 h-48 object-cover shadow-md"
+    >
   </div>
+
+  <!-- Next Button -->
+  <button
+    id="next-btn"
+    class="next-btn bg-neutral-600 text-white hover:bg-neutral-500 focus:outline-none flex-1 h-full flex items-center justify-center w-full"
+    aria-label="Next Celebrity"
+  >
+    &rarr;
+  </button>
+</div>
 
   <!-- Divider -->
   <hr class="divider">
@@ -60,7 +73,7 @@
   <h2 class="text-white text-xl mb-4">The Tech Stack</h2>
   <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-4xl pb-10">
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="go-grpc-content">
         <span class="flex justify-between items-center">
           <span>Go & gRPC</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,13 +81,13 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="go-grpc-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">Go and gRPC are used for building scalable and efficient APIs that handle communication between services.</p>
       </div>
     </li>
     
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="deepface-python-content">
         <span class="flex justify-between items-center">
           <span>DeepFace & Python</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -82,13 +95,13 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="deepface-python-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">DeepFace and Python are leveraged for facial recognition and processing, enabling accurate face embeddings.</p>
       </div>
     </li>
     
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="aws-content">
         <span class="flex justify-between items-center">
           <span>AWS</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,13 +109,13 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="aws-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">AWS provides the scalable infrastructure necessary to host and manage our application efficiently.</p>
       </div>
     </li>
     
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="kubernetes-content">
         <span class="flex justify-between items-center">
           <span>Kubernetes</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,13 +123,13 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="kubernetes-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">Kubernetes orchestrates our containerized applications, ensuring high availability and scalability.</p>
       </div>
     </li>
     
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="milvus-content">
         <span class="flex justify-between items-center">
           <span>Milvus Vector Database</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -124,12 +137,12 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="milvus-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">Milvus serves as our vector database, enabling efficient storage and retrieval of high-dimensional face embeddings.</p>
       </div>
     </li>
     <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false">
+      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="tailwind-css-content">
         <span class="flex justify-between items-center">
           <span>TailWind CSS</span>
           <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,13 +150,20 @@
           </svg>
         </span>
       </button>
-      <div class="mt-2 hidden p-5">
+      <div id="tailwind-css-content" class="mt-2 hidden p-5">
         <p class="text-gray-300">TailWind CSS provides utility-first classes that streamline our styling process, ensuring a consistent and responsive design.</p>
       </div>
     </li>
     <!-- Add more items as needed -->
   </ul>
+  
+  <!-- Image Gallery (Optional) -->
+  <div id="image-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6 w-4/5 max-w-4xl">
+    <!-- Dynamically inserted images will appear here -->
+  </div>
+
   <!-- Link to the JavaScript file -->
-  </body>
+  <script src="scripts/app.js"></script>
+</body>
 </html>
 
