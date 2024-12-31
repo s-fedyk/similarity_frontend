@@ -9,35 +9,95 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const API_BASE_URL = 'https://your-api.com'; // Replace with your actual API base URL
 
-  // Function to fetch and display images
-  async function fetchImages() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/images`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch images');
-      }
-      const images = await response.json();
-      displayImages(images);
-    } catch (error) {
-      console.error('Error fetching images:', error);
-      alert('Error fetching images. Please try again later.');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const celebrityImage = document.querySelector('.celebrity-image');
+  const celebrityDisplay = document.querySelector('.celebrity-display');
+
+  const celebrities = [
+    {
+      image: 'https://images.pexels.com/photos/374631/pexels-photo-374631.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+    },
+    {
+      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+    },
+    {
+      image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+    },
+    // Add more celebrities as needed
+  ];
+
+  let currentCelebrityIndex = 0;
+  let isAnimating = false; // To prevent rapid clicks during animation
+
+  // Function to update Celebrity Display with Sliding Animation
+  function updateCelebrity(index, direction) {
+    if (isAnimating) return; // Prevent multiple clicks during animation
+    isAnimating = true;
+
+    // Ensure index is within bounds
+    if (index < 0) {
+      currentCelebrityIndex = celebrities.length - 1;
+    } else if (index >= celebrities.length) {
+      currentCelebrityIndex = 0;
+    } else {
+      currentCelebrityIndex = index;
     }
+
+    // Determine sliding direction
+    let slideClassOut = '';
+    let slideClassIn = '';
+
+    if (direction === 'left') {
+      slideClassOut = 'slide-right';
+      slideClassIn = 'slide-left';
+    } else if (direction === 'right') {
+      slideClassOut = 'slide-left';
+      slideClassIn = 'slide-right';
+    }
+
+    // Add sliding out class
+    if (slideClassOut) {
+      celebrityDisplay.classList.add(slideClassOut);
+    }
+
+    // After transition duration, update content and slide in
+    setTimeout(() => {
+      // Update content
+      celebrityImage.src = celebrities[currentCelebrityIndex].image;
+      celebrityImage.alt = celebrities[currentCelebrityIndex].name;
+
+      // Remove sliding out class and add sliding in class
+      if (slideClassOut) {
+        celebrityDisplay.classList.remove(slideClassOut);
+      }
+      if (slideClassIn) {
+        celebrityDisplay.classList.add(slideClassIn);
+      }
+
+      // After sliding in, remove the sliding in class
+      setTimeout(() => {
+        if (slideClassIn) {
+          celebrityDisplay.classList.remove(slideClassIn);
+        }
+        isAnimating = false; // Animation complete
+      }, 500); // Duration should match the CSS transition duration
+    }, 500); // Duration should match the CSS transition duration
   }
 
-  // Function to display images in the gallery
-  function displayImages(images) {
-    // Assuming you have a #image-gallery element
-    const imageGallery = document.getElementById('image-gallery');
-    imageGallery.innerHTML = ''; // Clear existing images
-    images.forEach(img => {
-      const imgElement = document.createElement('img');
-      imgElement.src = img.url; // Adjust based on your API's response structure
-      imgElement.alt = 'Uploaded Image';
-      imgElement.loading = 'lazy'; // Optimize image loading
-      imgElement.classList.add('w-full', 'h-auto', 'rounded', 'shadow-md');
-      imageGallery.appendChild(imgElement);
-    });
-  }
+  // Event Listeners for Navigation Buttons
+  prevBtn.addEventListener('click', () => {
+    updateCelebrity(currentCelebrityIndex - 1, 'left');
+    console.log(currentCelebrityIndex)
+  });
+
+  nextBtn.addEventListener('click', () => {
+    updateCelebrity(currentCelebrityIndex + 1, 'right');
+    console.log(currentCelebrityIndex)
+  });
+
+  // Initial Display
+  updateCelebrity(currentCelebrityIndex, null);
 
   // Function to handle image upload
   async function uploadImage(event) {
