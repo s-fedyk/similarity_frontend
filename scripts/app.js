@@ -14,13 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const celebrityDisplay = document.querySelector('.celebrity-display');
 
   var celebrities = [];
-
   let currentCelebrityIndex = 0;
 
-  // Function to update Celebrity Display with Sliding Animation
   function updateCelebrity(index, direction) {
-
-    // Ensure index is within bounds
     if (index < 0) {
       currentCelebrityIndex = celebrities.length - 1;
     } else if (index >= celebrities.length) {
@@ -35,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to handle image upload
   async function uploadImage(file) {
     if (!file) {
-      showAlert('Please select an image to upload.', 'error');
       return;
     }
 
@@ -50,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (response.ok) {
-        showAlert('Image uploaded successfully!', 'success');
         imageInput.value = ''; // Clear the input
       } else {
         const errorData = await response.json();
@@ -58,30 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (error) {
       console.error('Error uploading image:', error);
-      showAlert(`Error uploading image: ${error.message}`, 'error');
     } finally {
       uploadSpinner.style.display = 'none'; // Hide spinner
     }
   }
 
-  // Function to show alert messages
-  function showAlert(message, type) {
-    // Create a message element
-    const messageElement = document.createElement('div');
-    if (type === 'success') {
-      messageElement.className = 'bg-green-500 text-white p-3 rounded mb-4 w-4/5 max-w-4xl';
-    } else if (type === 'error') {
-      messageElement.className = 'bg-red-500 text-white p-3 rounded mb-4 w-4/5 max-w-4xl';
-    }
-    messageElement.textContent = message;
-    uploadForm.prepend(messageElement);
-
-    // Remove the message after a certain time
-    const duration = type === 'success' ? 3000 : 5000;
-    setTimeout(() => {
-      messageElement.remove();
-    }, duration);
-  }
 
   // Click Event to Trigger File Input
   uploadBox.addEventListener('click', () => {
