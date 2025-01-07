@@ -2,69 +2,77 @@
 // scripts/app.js
 document.addEventListener('DOMContentLoaded', () => {
   const uploadForm = document.getElementById('upload-form');
-  const imageInput = document.getElementById('image-input');
-  const uploadSpinner = document.getElementById('upload-spinner');
-  const uploadBox = document.getElementById('upload-box');
+  const imageInput = document.getElementById('image-upload');
+  const imagePreview = document.getElementById('image-preview');
 
-  const API_BASE_URL = 'http://localhost:8080/similarity'; // Replace with your actual API base URL
+  const uploadLabel = document.getElementById('upload-label');
+  const spinner = document.getElementById('spinner');
 
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-  const celebrityImage = document.querySelector('.celebrity-image');
-  const celebrityDisplay = document.querySelector('.celebrity-display');
+  const API_BASE_URL = 'http://api.similarfaces2.me'; 
+  const FRONTEND_BASE_URL = 'http://similarfaces2.me'; 
 
   var celebrities = [];
   let currentCelebrityIndex = 0;
 
-  function updateCelebrity(index, direction) {
-    if (index < 0) {
-      currentCelebrityIndex = celebrities.length - 1;
-    } else if (index >= celebrities.length) {
-      currentCelebrityIndex = 0;
-    } else {
-      currentCelebrityIndex = index;
-    }
+  const scrollContainer = document.getElementById('scroll-container');
 
-    celebrityImage.src = celebrities[currentCelebrityIndex];
-  }
+  let isDragging = false; // To track dragging state
+  let startX; // Starting X position of the drag
+  let scrollLeft; // Initial scroll position of the container
 
-  // Function to handle image upload
-  async function uploadImage(file) {
-    if (!file) {
-      return;
-    }
+  // Mouse/Touch Down Event
+  scrollContainer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    scrollContainer.classList.add('cursor-grabbing'); // Change cursor to grabbing
+    startX = e.pageX - scrollContainer.offsetLeft;
+    scrollLeft = scrollContainer.scrollLeft;
+  });
 
-    const formData = new FormData();
-    formData.append('image', file);
+  scrollContainer.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+    scrollLeft = scrollContainer.scrollLeft;
+  });
 
-    try {
-      uploadSpinner.style.display = 'flex'; // Show spinner
-      const response = await fetch(`${API_BASE_URL}`, {
-        method: 'POST',
-        body: formData
-      });
+  // Mouse/Touch Move Event
+  scrollContainer.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault(); // Prevent selection/highlighting
+    const x = e.pageX - scrollContainer.offsetLeft;
+    const walk = (x - startX); // Multiplier for faster scrolling
+    scrollContainer.scrollLeft = scrollLeft - walk;
+  });
 
-      if (response.ok) {
-        imageInput.value = ''; // Clear the input
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      uploadSpinner.style.display = 'none'; // Hide spinner
-    }
-  }
+  scrollContainer.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+    const walk = (x - startX);
+    scrollContainer.scrollLeft = scrollLeft - walk;
+  });
+
+  // Mouse/Touch Up Event
+  scrollContainer.addEventListener('mouseup', () => {
+    isDragging = false;
+    scrollContainer.classList.remove('cursor-grabbing');
+  });
+
+  scrollContainer.addEventListener('mouseleave', () => {
+    isDragging = false;
+    scrollContainer.classList.remove('cursor-grabbing');
+  });
+
+  scrollContainer.addEventListener('touchend', () => {
+    isDragging = false;
+  });
 
 
   // Click Event to Trigger File Input
-  uploadBox.addEventListener('click', () => {
+  imageInput.addEventListener('click', () => {
     imageInput.click();
   });
 
   // Keyboard Accessibility: Trigger File Input on Enter or Space
-  uploadBox.addEventListener('keydown', (event) => {
+  imageInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       imageInput.click();
@@ -72,18 +80,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Drag and Drop Functionality
-  uploadBox.addEventListener('dragover', (event) => {
+  uploadLabel.addEventListener('dragover', (event) => {
+    console.log("dragging")
     event.preventDefault();
-    uploadBox.classList.add('border-indigo-500', 'bg-neutral-600');
+    uploadLabel.classList.add('border-teal-400');
   });
 
-  uploadBox.addEventListener('dragleave', () => {
-    uploadBox.classList.remove('border-indigo-500', 'bg-neutral-600');
+  uploadLabel.addEventListener('dragleave', () => {
+    event.preventDefault();
+    console.log("left")
+    uploadLabel.classList.remove('border-teal-400');
   });
 
-  uploadBox.addEventListener('drop', (event) => {
+  imageInput.addEventListener('drop', (event) => {
     event.preventDefault();
-    uploadBox.classList.remove('border-indigo-500', 'bg-neutral-600');
+    imageInput.classList.remove('border-teal-400');
     const files = event.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
@@ -91,97 +102,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+function populateResults(urls) {
+  const scrollContainer = document.getElementById('scroll-container');
+  const resultContainer = scrollContainer.querySelector('.flex'); // The flex container inside scroll-container
+
+  // Clear any existing results
+  resultContainer.innerHTML = '';
+
+  // Loop through the URLs and generate result cards
+  urls.forEach((url, index) => {
+    // Create the card container
+    const card = document.createElement('div');
+    card.className =
+      'w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0';
+
+    // Create the image container
+    const imageDiv = document.createElement('div');
+    imageDiv.className =
+      'w-full h-24 bg-gray-700 rounded-md mb-2 bg-center bg-cover';
+    imageDiv.style.backgroundImage = `url('${FRONTEND_BASE_URL}/${url}')`;
+
+    // Append elements
+    card.appendChild(imageDiv);
+    resultContainer.appendChild(card);
+  });
+
+  // Make the results section visible
+  scrollContainer.classList.remove('hidden');
+}
+
   // Change Event for File Input
   imageInput.addEventListener('change', () => {
     const file = imageInput.files[0];
+
+    const imageUrl = URL.createObjectURL(file);
+
+    imagePreview.style.backgroundImage = `url("${imageUrl}")`;
+    imagePreview.classList.add('bg-cover', 'bg-center'); 
+
     uploadImage(file);
+    scrollContainer.classList.remove("hidden")
   });
 
-  // Event Listeners for Navigation Buttons
-  prevBtn.addEventListener('click', () => {
-    updateCelebrity(currentCelebrityIndex - 1, 'left');
-    console.log(currentCelebrityIndex)
-  });
+   async function uploadImage(event) {
+      const file = imageInput.files[0];
 
-  nextBtn.addEventListener('click', () => {
-    updateCelebrity(currentCelebrityIndex + 1, 'right');
-    console.log(currentCelebrityIndex)
-  });
+      const formData = new FormData();
+      formData.append('image', file);
 
-  // Initial Display
-  updateCelebrity(currentCelebrityIndex, null);
-
-  // Function to handle image upload
-  async function uploadImage(event) {
-
-    const file = imageInput.files[0];
-    if (!file) {
-      alert('Please select an image to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      uploadSpinner.style.display = 'block'; // Show spinner
-      const response = await fetch(`${API_BASE_URL}`, {
+      spinner.classList.remove("hidden")
+      const response = await fetch(`${API_BASE_URL}/similarity`, {
         method: 'POST',
         body: formData
       });
+      spinner.classList.add("hidden")
 
-      if (response.ok) {
-        alert('Image uploaded successfully!');
-        console.log("response is")
-        celebrities = await response.json()
-        updateCelebrity(0, null)
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert(`Error uploading image: ${error.message}`);
-    } finally {
-      uploadSpinner.style.display = 'none'; // Hide spinner
+
+     if (response.ok) {
+       celebrities = await(response.json())
+       console.log(celebrities)
+       populateResults(celebrities)
+     } else {
+       console.log("error with response")
+     }
     }
-  }
-
-
-  // Function to handle expandable list items
-  function setupExpandableList() {
-    const expandableButtons = document.querySelectorAll('.expandable-button');
-
-    expandableButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const expanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', !expanded);
-
-        const content = button.nextElementSibling;
-        if (content) {
-          if (expanded) {
-            content.classList.add('hidden');
-            content.classList.remove('block');
-            // Rotate the icon back
-            const icon = button.querySelector('svg');
-            if (icon) {
-              icon.classList.remove('rotate-180');
-            }
-          } else {
-            content.classList.remove('hidden');
-            content.classList.add('block');
-            // Rotate the icon
-            const icon = button.querySelector('svg');
-            if (icon) {
-              icon.classList.add('rotate-180');
-            }
-          }
-        }
-      });
-    });
-  }
-
-  imageInput.addEventListener('submit', uploadImage);
-  setupExpandableList();
 });
 

@@ -2,202 +2,398 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Similarity App</title>
-  <!-- Link to JetBrains Mono via Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Link to Font Awesome for optional icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Link to the Tailwind CSS file -->
-  <link rel="stylesheet" href="styles/styles.css">
+  <meta charset="UTF-8" />
+  <title>SimilarFaces2 - Modern UI Concept (Tailwind)</title>
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+  <script src="scripts/app.js"></script>
 </head>
-<body class="flex flex-col items-center bg-neutral-800 text-neutral-200 min-h-screen font-jetbrains">
-  <h1 class="text-white text-2xl p-10">facessimilar2.me</h1>
+<body class="bg-gray-900 text-gray-100 flex flex-col items-center min-h-screen p-4 md:p-8 font-jetbrains">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Main Heading -->
+  <h1 class="text-3xl md:text-4xl font-bold mb-8">
+    facessimilar2.me
+  </h1>
 
-  <h3 class="text-neutral-200 text-lg mb-6">Which celebrity do you look like?</h3>
-  
-  <!-- Upload Box -->
-  <div class="upload-box border-2 border-white bg-neutral-700 p-10 text-center w-96 cursor-pointer relative transition-colors duration-300 hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="upload-box" tabindex="0" aria-label="Upload an image by clicking or dragging and dropping">
-    <form id="upload-form" class="flex flex-col items-center">
-      <input type="file" id="image-input" accept="image/*" required class="hidden">
-      <p class="text-neutral-300">
-        Drag and drop an image here<br />or click to select one
-      </p>
-    </form>
-    <!-- Loading Spinner -->
-    <div class="spinner absolute inset-0 flex items-center justify-center" id="upload-spinner" style="display: none;"></div>
+  <h2 class="text-1xl md:text-4xl font-bold mb-8">
+    Which celebrities do you look like?
+  </h2>
+
+  <!-- Upload Container -->
+  <div class="flex flex-col items-center bg-gray-800 rounded-md w-62 text-center mb-8">
+    <!-- Button-like label that triggers input -->
+  <label
+    id="upload-label"
+    for="image-upload"
+    class="border-2 border-dashed border-gray-500 text-gray-400 p-6 w-full rounded-md cursor-pointer 
+           hover:border-teal-400 hover:text-teal-400 transition flex flex-col items-center">
+
+    <input 
+      id="image-upload"
+      type="file"
+      accept="image/*"
+      class="hidden"
+    />
+    <div
+      id="image-preview"
+      class="flex w-48 items-center h-48 bg-gray-700 border-2 border-gray-600 rounded-md justify-center"
+        >
+          Upload Here
+       <div
+          id="spinner"
+          class="bg-gray-800 bg-opacity-10 flex items-center justify-center rounded-md hidden"
+        >
+          <svg
+            class="animate-spin h-8 w-8 text-teal-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+            ></path>
+          </svg>
+        </div>
+    </div>
+  </label>
   </div>
 
-  <!-- Celebrity Switch Box -->
-  <div class="celebrity-switch-box bg-neutral-700 rounded w-96 mt-10 grid grid-cols-3 items-center relative">
-  <!-- Previous Button -->
-  <button
-    id="prev-btn"
-    class="prev-btn bg-neutral-600 text-white hover:bg-neutral-500 focus:outline-none flex-1 h-full flex items-center justify-center w-full"
-    aria-label="Previous Celebrity"
+  <!-- Results Container -->
+ <div class="w-full max-w-xl mb-4">
+  <!-- Swipe Indicator -->
+  <div
+  id="finger-swipe"
+  class="absolute left-1/2 w-36 h-36 bg-transparent z-10 animate-swipe flex opacity-15 transform -translate-x-1/2 pointer-events-none"
+>
+  <svg
+    clip-rule="evenodd"
+    fill-rule="evenodd"
+    stroke-linejoin="round"
+    stroke-miterlimit="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    class="fill-gray-400 pointer-events-none"
   >
-    &larr;
-  </button>
+    <path
+      d="m10.978 14.999v3.251c0 .412-.335.75-.752.75-.188 0-.375-.071-.518-.206-1.775-1.685-4.945-4.692-6.396-6.069-.2-.189-.312-.452-.312-.725 0-.274.112-.536.312-.725 1.451-1.377 4.621-4.385 6.396-6.068.143-.136.33-.207.518-.207.417 0 .752.337.752.75v3.251h9.02c.531 0 1.002.47 1.002 1v3.998c0 .53-.471 1-1.002 1zm-1.5-7.506-4.751 4.507 4.751 4.507v-3.008h10.022v-2.998h-10.022z"
+      fill-rule="nonzero"
+    ></path>
+  </svg>
 
-  <!-- Celebrity Display Area -->
-  <div class="celebrity-display flex flex-col items-center flex-none" >
-    <img
-      src="https://images.pexels.com/photos/374631/pexels-photo-374631.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-      alt="Celebrity One"
-      class="celebrity-image w-48 h-48 object-cover shadow-md"
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="fill-gray-400 pointer-events-none"
+  >
+    <path
+      d="M18.536 7.555c-1.188-.252-4.606-.904-5.536-1.088v-3.512c0-1.629-1.346-2.955-3-2.955s-3 1.326-3 2.955v7.457c-.554-.336-1.188-.621-1.838-.715-1.822-.262-3.162.94-3.162 2.498 0 .805.363 1.613 1.022 2.271 3.972 3.972 5.688 5.125 6.059 9.534h9.919v-1.748c0-5.154 3-6.031 3-10.029 0-2.448-1.061-4.157-3.464-4.668zm.357 8.022c-.821 1.483-1.838 3.319-1.891 6.423h-6.13c-.726-3.82-3.81-6.318-6.436-8.949-.688-.686-.393-1.37.442-1.373 1.263-.006 3.06 1.884 4.122 3.205v-11.928c0-.517.458-.955 1-.955s1 .438 1 .955v6.948c0 .315.256.571.572.571.314 0 .57-.256.57-.571v-.575c0-.534.49-.938 1.014-.833.398.079.686.428.686.833v1.273c0 .315.256.571.571.571s.571-.256.571-.571v-.83c0-.531.487-.932 1.008-.828.396.078.682.424.682.828v1.533c0 .315.256.571.571.571s.571-.256.571-.571v-.912c0-.523.545-.867 1.018-.646.645.305 1.166.932 1.166 2.477 0 1.355-.465 2.193-1.107 3.354z"
+    ></path>
+  </svg>
+
+  <svg
+    clip-rule="evenodd"
+    fill-rule="evenodd"
+    stroke-linejoin="round"
+    stroke-miterlimit="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    class="fill-gray-400 pointer-events-none"
+  >
+    <path
+      d="m13.022 14.999v3.251c0 .412.335.75.752.75.188 0 .375-.071.518-.206 1.775-1.685 4.945-4.692 6.396-6.069.2-.189.312-.452.312-.725 0-.274-.112-.536-.312-.725-1.451-1.377-4.621-4.385-6.396-6.068-.143-.136-.33-.207-.518-.207-.417 0-.752.337-.752.75v3.251h-9.02c-.531 0-1.002.47-1.002 1v3.998c0 .53.471 1 1.002 1zm1.5-4.498v-3.008l4.751 4.507-4.751 4.507v-3.008h-10.022v-2.998z"
+      fill-rule="nonzero"
+    ></path>
+  </svg>
+</div>
+<div id="scroll-container" class="relative w-full max-w-xl overflow-x-auto flex mb-8">  
+  <div class="flex gap-4 mb-8">
+    <div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
     >
-  </div>
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
 
-  <!-- Next Button -->
-  <button
-    id="next-btn"
-    class="next-btn bg-neutral-600 text-white hover:bg-neutral-500 focus:outline-none flex-1 h-full flex items-center justify-center w-full"
-    aria-label="Next Celebrity"
-  >
-    &rarr;
-  </button>
+    <div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
+    <div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
+  <div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
+<div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
+<div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('');"
+      ></div>
+    </div>
+<div
+      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+    >
+      <div
+        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+        style="background-image: url('example-face3.jpg');"
+      ></div>
+    </div>
+    <!-- Continue up to 10 cards -->
+  </div>
 </div>
 
-  <!-- Divider -->
-  <hr class="divider">
-
   <!-- About Section -->
-  <h2 class="text-white text-xl mb-4">About (Me & The app)</h2>
-  <div class="w-4/5 max-w-5xl space-y-8 ">
-    <p class="gray-300 mb-6">
-      This is a full-stack, ML application written over Christmas break to show off
-      my technical skills to recruiters.
+  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">    
+      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">About</h2>    
+      <p class="mb-3 sm:mb-4"> 
+        This application works by using a convolutional neural network (CNN) to first detect the faces present in an image, and then extract their mathematical representations (this representation is called an embedding). When you have access to many of these embeddings, there is a natural notion of 'distance' between them. 
     </p>
-     <p class="gray-300 mb-6">
-    <a href="https://www.linkedin.com/in/sfedyk/" 
-       class="text-gray-600 hover:bg-neutral-500"
-       target="_blank" 
-       rel="noopener noreferrer">
-      I am a software engineer
-    </a> 
-    studying computer science at the University of Alberta, due to 
-    graduate in May 2025. I primarily consider myself a backend engineer (if it is not
-    obvious through the simplicity of this web page).
-  </p>
-    <p class="text-gray-300 mb-6">
-      This application works by using a neural network to first detect the faces present 
-      in an image, and then extract their mathematical representations 
-      (this representation is called an embedding). When you have access to many of these 
-      embeddings, there is a natural notion of 'distance' between them.
+    <p class="mb-3 sm:mb-4"> 
+The extracted embedding is then used to search a database. A database offers a convenient way to store and access some sort of structured data. A vector database is the same, except they are purpose built around aproximate nearest neighbour algorithms. These algorithms help us take advantage of the aforementioned notion of 'distance' when searching a set of embeddings, finding one that is (hopefully) similar to yours.
     </p>
-    <p class="text-gray-300 mb-6">
-      The next key component in the app is a vector database. A database offers a convenient
-      way to store and access some sort of structured data. A vector database is the same, 
-      except they are purpose built around aproximate nearest neighbour algorithms. These 
-      algorithms help us take advantage of the aforementioned notion of 'distance' when 
-      searching a set of embeddings, finding one that is (hopefully) similar to yours.
-    </p>
-    <p class="text-gray-300 mb-6">
-      This process and technology is similar to what a service like Netflix or Spotify could 
-      use in their recommendation systems. For example, if you like a certain song, 
-      Spotify would query its vector database of songs, and give you suggestions of 
-      songs which embeddings are located nearby. This is of course an over simplification, 
-      and their production recommendation systems are much more complicated than this.
+    <p class="mb-3 sm:mb-4"> 
+This process and technology is similar to what a service like Netflix or Spotify could use in their recommendation systems. For example, if you like a certain song, Spotify would query its vector database of songs, and give you suggestions of songs which embeddings are located nearby. This is of course an over simplification, and their production recommendation systems are much more complicated than this. 
     </p>
   </div>
-  <hr class="divider">
 
-  <!-- Tech Stack Section -->
-  <h2 class="text-white text-xl mb-4">The Tech Stack</h2>
-  <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10">
-    <li class="bg-neutral-700 p-4 rounded ">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="go-grpc-content">
-        <span class="flex justify-between items-center">
-          <span>Go & gRPC</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed">    
+   <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">The Tech Stack</h2>    
+      <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10 w-full">
+      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-1"
+        >
+          <span>Go &amp gRPC</span>
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
-        </span>
-      </button>
-      <div id="go-grpc-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">Go and gRPC are used for building scalable and efficient APIs that handle communication between services.</p>
-      </div>
-    </li>
-    
-    <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="deepface-python-content">
-        <span class="flex justify-between items-center">
-          <span>DeepFace & Python</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </button>
+        <div id="content-1" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
+      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-2"
+        >
+          <span>Deepface &amp; Python</span>
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
-        </span>
-      </button>
-      <div id="deepface-python-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">DeepFace and Python are leveraged for facial recognition and processing, enabling accurate face embeddings.</p>
-      </div>
-    </li>
-    
-    <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="aws-content">
-        <span class="flex justify-between items-center">
+        </button>
+        <div id="content-2" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
+      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-3"
+        >
           <span>AWS</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
-        </span>
-      </button>
-      <div id="aws-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">AWS provides the scalable infrastructure necessary to host and manage our application efficiently.</p>
-      </div>
-    </li>
-    
-    <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="kubernetes-content">
-        <span class="flex justify-between items-center">
-          <span>Kubernetes</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </button>
+        <div id="content-3" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
+      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-4"
+        >
+          <span>Kubernetes &amp Docker</span>
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
-        </span>
-      </button>
-      <div id="kubernetes-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">Kubernetes orchestrates our containerized applications, ensuring high availability and scalability.</p>
-      </div>
-    </li>
-    
-    <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="milvus-content">
-        <span class="flex justify-between items-center">
+        </button>
+        <div id="content-4" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
+      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-5"
+        >
           <span>Milvus Vector Database</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
-        </span>
-      </button>
-      <div id="milvus-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">Milvus serves as our vector database, enabling efficient storage and retrieval of high-dimensional face embeddings.</p>
-      </div>
-    </li>
-    <li class="bg-neutral-700 p-4 rounded">
-      <button class="w-full text-left focus:outline-none expandable-button" aria-expanded="false" aria-controls="tailwind-css-content">
-        <span class="flex justify-between items-center">
-          <span>TailWind CSS</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </span>
-      </button>
-      <div id="tailwind-css-content" class="mt-2 hidden p-5">
-        <p class="text-gray-300">TailWind CSS provides utility-first classes that streamline our styling process, ensuring a consistent and responsive design.</p>
-      </div>
-    </li>
-    <!-- Add more items as needed -->
-  </ul>
-  
-  <!-- Image Gallery (Optional) -->
-  <div id="image-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6 w-4/5 max-w-4xl">
-    <!-- Dynamically inserted images will appear here -->
-  </div>
+        </button>
+        <div id="content-5" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
 
-  <!-- Link to the JavaScript file -->
-  <script src="scripts/app.js"></script>
+    <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+        <button
+          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+          aria-expanded="false"
+          data-target="content-6"
+        >
+          <span>Prometheus &amp Grafana</span>
+          <svg
+            class="w-4 h-4 transform transition-transform duration-200"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
+          </svg>
+        </button>
+        <div id="content-6" class="mt-2 p-5 hidden">
+          <p class="text-gray-300">
+            TODO
+          </p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.expandable-button');
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.getAttribute('data-target');
+          const content = document.getElementById(targetId);
+
+          // Toggle visibility of the content
+          if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            content.classList.add('block');
+            button.setAttribute('aria-expanded', 'true');
+            button.querySelector('svg').classList.add('rotate-180'); // Rotate arrow icon
+          } else {
+            content.classList.add('hidden');
+            content.classList.remove('block');
+            button.setAttribute('aria-expanded', 'false');
+            button.querySelector('svg').classList.remove('rotate-180'); // Reset arrow rotation
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
 
