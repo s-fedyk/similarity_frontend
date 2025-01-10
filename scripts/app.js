@@ -131,40 +131,90 @@ function populateResults(urls) {
   scrollContainer.classList.remove('hidden');
 }
 
+function updatePreview(imageURL) {
+    imagePreview.style.backgroundImage = `url("${imageURL}")`;
+    imagePreview.classList.add('bg-cover', 'bg-center'); 
+}
+
+function drawFaceOutline(facialArea, originalWidth, originalHeight) {
+  const preview = document.getElementById('image-preview');
+  const previewWidth = preview.clientWidth;
+  const previewHeight = preview.clientHeight;
+
+  const scaleX = previewWidth / originalWidth;
+  const scaleY = previewHeight / originalHeight;
+
+  const boxX = facialArea.x * scaleX;
+  const boxY = facialArea.y * scaleY;
+  const boxW = facialArea.w * scaleX;
+  const boxH = facialArea.h * scaleY;
+
+  const oldOutline = document.getElementById('face-outline');
+  if (oldOutline) {
+    oldOutline.remove();
+  }
+
+  const faceOutline = document.createElement('div');
+  faceOutline.id = 'face-outline';
+
+  faceOutline.classList.add(
+    'absolute',
+    'border-2',
+    'border-red-500',
+    'pointer-events-none'
+  );
+
+  
+  faceOutline.style.left = boxX + 'px';
+  faceOutline.style.top = boxY + 'px';
+  faceOutline.style.width = boxW + 'px';
+  faceOutline.style.height = boxH + 'px';
+
+  preview.appendChild(faceOutline);
+}
+
   // Change Event for File Input
   imageInput.addEventListener('change', () => {
     const file = imageInput.files[0];
-
-    const imageUrl = URL.createObjectURL(file);
-
-    imagePreview.style.backgroundImage = `url("${imageUrl}")`;
-    imagePreview.classList.add('bg-cover', 'bg-center'); 
-
     uploadImage(file);
     scrollContainer.classList.remove("hidden")
   });
 
-   async function uploadImage(event) {
-      const file = imageInput.files[0];
+   async function uploadImage(file) {
+      const imageUrl = URL.createObjectURL(file);
+      updatePreview(imageUrl)
 
       const formData = new FormData();
       formData.append('image', file);
 
-      spinner.classList.remove("hidden")
-      const response = await fetch(`${API_BASE_URL}/similarity`, {
-        method: 'POST',
-        body: formData
-      });
-      spinner.classList.add("hidden")
+      const tempImg = new Image();
+      tempImg.src = imageUrl;
 
+      tempImg.onload = async () => {
+        const w = tempImg.naturalWidth
+        const h = tempImg.naturalHeight
 
-     if (response.ok) {
-       celebrities = await(response.json())
-       console.log(celebrities)
-       populateResults(celebrities)
-     } else {
-       console.log("error with response")
-     }
+        spinner.classList.remove("hidden")
+        const response = await fetch(`${API_BASE_URL}/similarity`, {
+          method: 'POST',
+          body: formData
+        });
+        spinner.classList.add("hidden")
+
+         if (response.ok) {
+         responseJson = await(response.json())
+
+         celebrities = responseJson["similar_urls"]
+         facialArea = responseJson["facial_area"]
+
+         drawFaceOutline(facialArea, w, h)
+
+         console.log(celebrities)
+         populateResults(celebrities)
+         } else {
+         console.log("error with response")
+         }
+      };
     }
 });
 
