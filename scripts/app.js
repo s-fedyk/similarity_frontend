@@ -1,6 +1,37 @@
 
-// scripts/app.js
 document.addEventListener('DOMContentLoaded', () => {
+  const randomBtn = document.getElementById('random-image-btn');
+
+  randomBtn.addEventListener('click', async () => {
+    const imgName = getRandomImageName();
+    const randomURL = `http://similarfaces2.me/img_align_celeba/${imgName}`;
+
+    try {
+      spinner.classList.remove('hidden');
+      const response = await fetch(randomURL);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch random image: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+
+      const file = new File([blob], imgName, { type: blob.type });
+
+      updatePreview(randomURL);
+
+      uploadImage(file);
+    } catch (err) {
+      console.error('Error fetching random image:', err);
+      spinner.classList.add('hidden');
+    }
+  });
+
+  function getRandomImageName() {
+    const min = 1;
+    const max = 202599;
+    const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    return String(randomNum).padStart(6, '0') + '.jpg'; 
+  }
+
   const uploadForm = document.getElementById('upload-form');
   const imageInput = document.getElementById('image-upload');
   const imagePreview = document.getElementById('image-preview');
@@ -102,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-function populateResults(urls) {
+  function populateResults(urls) {
   const scrollContainer = document.getElementById('scroll-container');
   const resultContainer = scrollContainer.querySelector('.flex'); // The flex container inside scroll-container
 
@@ -129,14 +160,14 @@ function populateResults(urls) {
 
   // Make the results section visible
   scrollContainer.classList.remove('hidden');
-}
+  }
 
-function updatePreview(imageURL) {
+  function updatePreview(imageURL) {
     imagePreview.style.backgroundImage = `url("${imageURL}")`;
     imagePreview.classList.add('bg-cover', 'bg-center'); 
-}
+  }
 
-function drawFaceOutline(facialArea, originalWidth, originalHeight) {
+  function drawFaceOutline(facialArea, originalWidth, originalHeight) {
   const preview = document.getElementById('image-preview');
   const previewWidth = preview.clientWidth;
   const previewHeight = preview.clientHeight;
@@ -149,11 +180,13 @@ function drawFaceOutline(facialArea, originalWidth, originalHeight) {
   const boxW = facialArea.w * scaleX;
   const boxH = facialArea.h * scaleY;
 
+  // Remove an old outline if present
   const oldOutline = document.getElementById('face-outline');
   if (oldOutline) {
     oldOutline.remove();
   }
 
+  // Create the new outline <div>
   const faceOutline = document.createElement('div');
   faceOutline.id = 'face-outline';
 
@@ -164,14 +197,14 @@ function drawFaceOutline(facialArea, originalWidth, originalHeight) {
     'pointer-events-none'
   );
 
-  
+
   faceOutline.style.left = boxX + 'px';
   faceOutline.style.top = boxY + 'px';
   faceOutline.style.width = boxW + 'px';
   faceOutline.style.height = boxH + 'px';
 
   preview.appendChild(faceOutline);
-}
+  }
 
   // Change Event for File Input
   imageInput.addEventListener('change', () => {
