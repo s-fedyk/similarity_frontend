@@ -3,14 +3,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import custom styles */
-@import './custom.css';
-
-body {
-  @apply font-hevetica;
-}
-
-.divider {
-  @apply border-t border-white w-4/5 my-10;
-}

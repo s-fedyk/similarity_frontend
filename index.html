@@ -5,19 +5,19 @@
   <meta charset="UTF-8" />
   <title>SimilarFaces2Me - Facial Recognition App</title>
   <!-- Tailwind CSS (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles/styles.css">
   <script src="scripts/app.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 flex flex-col items-center min-h-screen p-4 md:p-8 font-jetbrains">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Main Heading -->
   <h1 class="text-3xl md:text-4xl font-bold mb-8">
-    facessimilar2.me
+    similarfaces2.me
   </h1>
 
   <h2 class="text-1xl md:text-4xl font-bold mb-8">
-    Which celebrities do you look like?
+    Modern Facial Recognition Demo
   </h2>
   <!-- Random Face Button -->
   <button
@@ -45,7 +45,7 @@
       id="image-preview"
       class="flex w-48 items-center h-48 bg-gray-700 border-2 border-gray-600 rounded-md justify-center relative"
         >
-          Upload Here
+          
        <div
           id="spinner"
           class="bg-gray-800 bg-opacity-10 flex items-center justify-center rounded-md hidden"
@@ -74,11 +74,34 @@
     </div>
   </label>
 
-
   </div>
+<!-- Facial Analysis Results -->
+<div id="facial-analysis" class="w-full max-w-xl bg-gray-800 p-4 sm:p-6 rounded-md mb-6">
+  <h2 class="text-xl sm:text-2xl font-semibold mb-4">Facial Analysis</h2>
+  
+  <!-- Analysis Details -->
+  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 text-gray-100">
+    <div class="bg-gray-700 p-4 rounded-md text-center">
+      <h3 class="text-lg font-bold mb-2">Age</h3>
+      <p id="age-result" class="text-teal-400 text-xl break-words">--</p>
+    </div>
+    <div class="bg-gray-700 p-4 rounded-md text-center">
+      <h3 class="text-lg font-bold mb-2">Gender</h3>
+      <p id="gender-result" class="text-teal-400 text-xl break-words">--</p>
+    </div>
+    <div class="bg-gray-700 p-4 rounded-md text-center">
+      <h3 class="text-lg font-bold mb-2">Emotion</h3>
+      <p id="emotion-result" class="text-teal-400 text-xl break-words">--</p>
+    </div>
+    <div class="bg-gray-700 p-4 rounded-md text-center">
+      <h3 class="text-lg font-bold mb-2">Race</h3>
+      <p id="race-result" class="text-teal-400 text-xl break-words">--</p>
+    </div>
+  </div>
+</div>
 
   <!-- Results Container -->
- <div class="w-full max-w-xl mb-4">
+<div class="w-full max-w-xl mb-4">
   <!-- Swipe Indicator -->
   <div
   id="finger-swipe"
@@ -201,7 +224,7 @@ This process and technology is similar to what a service like Netflix or Spotify
     </p>
   </div>
 
-  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed">    
+  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-6">    
    <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">The Tech Stack</h2>    
       <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10 w-full">
       <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
@@ -228,7 +251,8 @@ This process and technology is similar to what a service like Netflix or Spotify
         </button>
         <div id="content-1" class="mt-2 p-5 hidden">
           <p class="text-gray-300">
-            TODO
+                The 'middleware' or 'backend' of this application is written in Go. Go was chosen for its speed,
+                great standard library and package manager.
           </p>
         </div>
       </li>
@@ -256,7 +280,8 @@ This process and technology is similar to what a service like Netflix or Spotify
         </button>
         <div id="content-2" class="mt-2 p-5 hidden">
           <p class="text-gray-300">
-            TODO
+                The model and preprocessing servers of this application are written in Python.
+                Python's 
           </p>
         </div>
       </li>
@@ -271,8 +296,7 @@ This process and technology is similar to what a service like Netflix or Spotify
             class="w-4 h-4 transform transition-transform duration-200"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            viewBox="0 0 24 24" stroke="currentColor"
           >
             <path
               stroke-linecap="round"
@@ -284,7 +308,16 @@ This process and technology is similar to what a service like Netflix or Spotify
         </button>
         <div id="content-3" class="mt-2 p-5 hidden">
           <p class="text-gray-300">
-            TODO
+            This entire application is powered by Amazon Web Services. 
+          </p>
+          <p class="text-gray-300 p-6">
+            S3 is to serve this static website, as a model registry, and as a feature store for intermediary 
+            model outputs.
+          </p>
+          <p class="text-gray-300 p-6">
+            EKS powers the scaling and deployments of the microservices needed to run this application. Currently there
+            four services powering this application. The 'backend' of this application acts as a middleware, distributing user 
+            requests to a preprocessor, then to facial analysis and embedding models.
           </p>
         </div>
       </li>
@@ -375,7 +408,67 @@ This process and technology is similar to what a service like Netflix or Spotify
       </li>
     </ul>
   </div>
-</div>
+  <div class="w-full max-w-2xl bg-gray-800 pt-4 sm:p-6 rounded-md leading-relaxed">    
+   <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Technical Discussion</h2>    
+    <p class="mb-3 sm:mb-4"> 
+        Let's start with a basic flow of how requests are processed, and why I am using certain technologies.
+    </p>
+    <ol>
+          <li>
+            1. A user sends a request through the frontend. This is through simple HTTP with an image as the payload. 
+            This is recieved by my Go backend, converted into jpeg (realistically, this conversion should be in my preprocessing step), and then temporarily 
+            uploaded into an S3 bucket for further processing on different nodes. I am temporarily storing these images because facial recognition pipelines are 
+            multi-stage, and produce reusable artefacts Allowing reuse (in my case, such artefacts are a resolution corrected image, 
+            an extracted face... etc). When I say multi-stage, I mean that multiple models are used in-series for these tasks. As an example, before we are 
+            able to classify the gender of a face, we first need to extract a bounding box of the face from the image. While classification of a face IS possible
+            without face extraction, it adds useless noise (information irrelevant to the task) to the classification input, which deteriorates the 
+            performance of the classification model.
+          </li>
+          <li class="mt-4">
+            2. After the image is available in my S3 'feature store', the middleware triggers a call to the preprocessing service.
+            All of the internal communications is handled via gRPC. gRPC is a communications protocol specifically made for in-datacenter 
+            use. It is comparable to something like REST, except it is stricter (requires interface definition files) and more performant.
+          </li>
+          <li class="mt-4">
+            3. The preprocessing service downloads the image from S3, and then performs processing required to transform the image into a 1024x1024 format
+            which my face extraction model expects. The processing applied include re-scaling, and then padding of black pixels to the desired width and height.
+            The processed image is then uploaded to S3. The 1024x1024 shape is an arbitrary shape I decided on after compiling my models with the AWS Neuron compiler,
+            compilation produces a model with restricted input sizing to most effectively take advantage of hardware-specific  optimizations. I had thought about 
+            compiling 
+            my facial detection model multiple times for different input sizes, and then using a bucketing technique on different shapes to provide 
+            optimal detection performance for different image sizes, but I am restricted by time.
+          </li>
+          <li class="mt-4">
+            4. After the preprocessed image is available, the middleware triggers multiple inference calls (in parallel) to the model servers. The model servers
+            pull down the processed image artefacts from S3, and then run their models on them. There are currently 6 different models that run: face extraction, 
+            face embedding, emotion classification, age classification, race classification and gender classification.
+            However, they are inefficiently distributed across two different inference nodes because I am limited by time (and money!). Currently, 
+            face extraction actually runs twice. Once for the embedding model servers, and once for the facial analysis model servers. 
+            With 3 inference nodes, I would add a face extraction similar to the preprocessing step which produces an extracted face artefact, store it in S3, which 
+            could pulled down for use by all the previously mentioned models, allowing more efficient compute use and scalability. With 6 inference nodes, 
+            every model would get its own server, and re-use the face extraction aftefact.
+          </li>
+          <li class="mt-4">
+            5. As soon as embedding is available, it is used to query the vector database for similar faces. This database
+            was filled offline, using my local machine to create embeddings. It holds over 200k queryable embeddings. The model I used was Meta/Facebook's
+            Facenet512d. I chose this because it offers relatively small sized embedding vectors (dim 512), while also offering excellent discriminatory 
+            performance.
+            I am not self-hosting/managing milvus vectordb on EKS. I was managing it myself at the beginning of this project because I believe in doing things 
+            the hard way while learning, 
+            however the costs became prohibitive since the simplest deployment of Milvus requires a minimum resource commitment of 3 m6i.xlarge instances, which
+            are expensive to keep up. 
+            The database response does not contain an image blob, but rather a path to an S3 bucket. This is once again to reduce the sizes of my responses, 
+            and push the availability portion of this project unto AWS as much as I can.
+          </li>
+          <li class="mt-4">
+            6. The frontend recieves the response containing paths to S3 resources, facial analysis results and populates them accordingly.
+          </li>
+    </ol>
+    <p class="mt-4">
+          The following is my system design
+    </p>
+  </div>
+  </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

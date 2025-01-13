@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const imageInput = document.getElementById('image-upload');
   const imagePreview = document.getElementById('image-preview');
 
+  const age = document.getElementById('age-result')
+  const gender = document.getElementById('gender-result')
+  const emotion = document.getElementById('emotion-result')
+  const race = document.getElementById('race-result')
+
   const uploadLabel = document.getElementById('upload-label');
   const spinner = document.getElementById('spinner');
 
@@ -167,43 +172,98 @@ document.addEventListener('DOMContentLoaded', () => {
     imagePreview.classList.add('bg-cover', 'bg-center'); 
   }
 
-  function drawFaceOutline(facialArea, originalWidth, originalHeight) {
-  const preview = document.getElementById('image-preview');
-  const previewWidth = preview.clientWidth;
-  const previewHeight = preview.clientHeight;
+  function populateFaceAttributes(attributes) {
+    const age = document.getElementById('age-result')
+    const gender = document.getElementById('gender-result')
+    const emotion = document.getElementById('emotion-result')
+    const race = document.getElementById('race-result')
 
-  const scaleX = previewWidth / originalWidth;
-  const scaleY = previewHeight / originalHeight;
-
-  const boxX = facialArea.x * scaleX;
-  const boxY = facialArea.y * scaleY;
-  const boxW = facialArea.w * scaleX;
-  const boxH = facialArea.h * scaleY;
-
-  // Remove an old outline if present
-  const oldOutline = document.getElementById('face-outline');
-  if (oldOutline) {
-    oldOutline.remove();
+    age.textContent = attributes.age ?? "--";
+    gender.textContent = attributes.gender ?? "--";
+    emotion.textContent = attributes.emotion ?? "--";
+    race.textContent = attributes.race ?? "--";
   }
 
-  // Create the new outline <div>
-  const faceOutline = document.createElement('div');
-  faceOutline.id = 'face-outline';
+  function drawFaceOutline(facialArea, originalWidth, originalHeight) {
+    const preview = document.getElementById('image-preview');
+    const previewWidth = preview.clientWidth;
+    const previewHeight = preview.clientHeight;
 
-  faceOutline.classList.add(
-    'absolute',
-    'border-2',
-    'border-red-500',
-    'pointer-events-none'
-  );
+    const scaleX = previewWidth / originalWidth;
+    const scaleY = previewHeight / originalHeight;
 
+    const boxX = facialArea.x * scaleX;
+    const boxY = facialArea.y * scaleY;
+    const boxW = facialArea.w * scaleX;
+    const boxH = facialArea.h * scaleY;
 
-  faceOutline.style.left = boxX + 'px';
-  faceOutline.style.top = boxY + 'px';
-  faceOutline.style.width = boxW + 'px';
-  faceOutline.style.height = boxH + 'px';
+    const leftEyeX = facialArea.left_eye.x * scaleX;
+    const leftEyeY = facialArea.left_eye.y * scaleY;
 
-  preview.appendChild(faceOutline);
+    const rightEyeX = facialArea.right_eye.x * scaleX;
+    const rightEyeY = facialArea.right_eye.y * scaleY;
+
+    // Remove an old outline if present
+    const oldOutline = document.getElementById('face-outline');
+    const oldLeftEyeOutline = document.getElementById('left-eye-outline');
+    const oldRightEyeOutline = document.getElementById('right-eye-outline');
+
+    if (oldOutline) {
+      oldOutline.remove();
+    }
+    if (oldLeftEyeOutline) {
+      oldLeftEyeOutline.remove();
+    }
+    if (oldRightEyeOutline) {
+      oldRightEyeOutline.remove();
+    }
+
+    // Create the new outline <div>
+    const faceOutline = document.createElement('div');
+    const leftEyeOutline = document.createElement('div');
+    const rightEyeOutline = document.createElement('div');
+
+    faceOutline.id = 'face-outline';
+    leftEyeOutline.id = 'left-eye-outline';
+    rightEyeOutline.id = 'right-eye-outline';
+
+    faceOutline.classList.add(
+      'absolute',
+      'border-2',
+      'border-red-500',
+      'pointer-events-none'
+    );
+    leftEyeOutline.classList.add(
+      'absolute',
+      'border-2',
+      'border-red-500',
+      'pointer-events-none'
+    );
+    rightEyeOutline.classList.add(
+      'absolute',
+      'border-2',
+      'border-red-500',
+      'pointer-events-none'
+    );
+
+    faceOutline.style.left = boxX + 'px';
+    faceOutline.style.top = boxY + 'px';
+    faceOutline.style.width = boxW + 'px';
+    faceOutline.style.height = boxH + 'px';
+
+    rightEyeOutline.style.left = rightEyeX + 'px';
+    rightEyeOutline.style.top = rightEyeY + 'px';
+    rightEyeOutline.style.width = "1" + 'px';
+    rightEyeOutline.style.height = "1" + 'px';
+
+    leftEyeOutline.style.left = leftEyeX + 'px';
+    leftEyeOutline.style.top = leftEyeY + 'px';
+    leftEyeOutline.style.width = "1" + 'px';
+    leftEyeOutline.style.height = "1" + 'px';
+
+    preview.appendChild(faceOutline);
+    preview.appendChild(rightEyeOutline);
+    preview.appendChild(leftEyeOutline);
   }
 
   // Change Event for File Input
@@ -239,13 +299,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
          celebrities = responseJson["similar_urls"]
          facialArea = responseJson["facial_area"]
+         attributes = responseJson["analysis"]
 
          drawFaceOutline(facialArea, w, h)
+         populateFaceAttributes(attributes)
 
          console.log(celebrities)
          populateResults(celebrities)
          } else {
-         console.log("error with response")
+           console.log("error with response")
          }
       };
     }
