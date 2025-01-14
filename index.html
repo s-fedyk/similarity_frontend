@@ -73,10 +73,9 @@
         </div>
     </div>
   </label>
-
   </div>
 <!-- Facial Analysis Results -->
-<div id="facial-analysis" class="w-full max-w-xl bg-gray-800 p-4 sm:p-6 rounded-md mb-6">
+<div id="facial-analysis" class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md mb-6">
   <h2 class="text-xl sm:text-2xl font-semibold mb-4">Facial Analysis</h2>
   
   <!-- Analysis Details -->
@@ -101,7 +100,7 @@
 </div>
 
   <!-- Results Container -->
-<div class="w-full max-w-xl mb-4">
+<div class="w-full max-w-2xl mb-4">
   <!-- Swipe Indicator -->
   <div
   id="finger-swipe"
@@ -147,7 +146,7 @@
     ></path>
   </svg>
 </div>
-<div id="scroll-container" class="relative w-full max-w-xl overflow-x-auto flex mb-8">  
+<div id="scroll-container" class="relative w-full max-w-2xl overflow-x-auto flex mb-8">  
   <div class="flex gap-4 mb-8">
     <div
       class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
@@ -213,15 +212,28 @@
   <!-- About Section -->
   <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">    
       <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">About</h2>    
-      <p class="mb-3 sm:mb-4"> 
-        This application works by using a convolutional neural network (CNN) to first detect the faces present in an image, and then extract their mathematical representations (this representation is called an embedding). When you have access to many of these embeddings, there is a natural notion of 'distance' between them. 
-    </p>
-    <p class="mb-3 sm:mb-4"> 
-The extracted embedding is then used to search a database. A database offers a convenient way to store and access some sort of structured data. A vector database is the same, except they are purpose built around aproximate nearest neighbour algorithms. These algorithms help us take advantage of the aforementioned notion of 'distance' when searching a set of embeddings, finding one that is (hopefully) similar to yours.
-    </p>
-    <p class="mb-3 sm:mb-4"> 
-This process and technology is similar to what a service like Netflix or Spotify could use in their recommendation systems. For example, if you like a certain song, Spotify would query its vector database of songs, and give you suggestions of songs which embeddings are located nearby. This is of course an over simplification, and their production recommendation systems are much more complicated than this. 
-    </p>
+      <p class="mb-3 sm:mb-4">
+  Hello, 
+  <a 
+    href="https://www.linkedin.com/in/sfedyk/" 
+    class="text-teal-400 hover:text-teal-600 transition">
+    I am a software engineer
+  </a> 
+  currently studying at the University of Alberta.
+</p>
+      <p class="mb-3 sm:mb-4">
+        This is a machine learning project that I built to develop my skills in deploying, serving and scaling machine learning models.
+      </p>
+      <p class="mb-3 sm:mb-4">
+        Recently I was looking for projects to build to show off my technical expertise, I wanted something that was relatively compute 
+        intensive because results are impressive when they are fast.
+        Online, I came across sites online offering similar features, except they were awfully slow. This inspired
+        me to build something that is hopefully much faster, offers equally good face recognition features, and is not plastered with ads.
+      </p>
+      <p class="mb-3 sm:mb-4">
+        There is zero caching of results in this application. Every inference request is ran fresh. What you see 
+        is the results being computed and delivered to you in real time.
+      </p>
   </div>
 
   <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-6">    
@@ -519,8 +531,45 @@ This process and technology is similar to what a service like Netflix or Spotify
       />
       </div>
       <p class="mb-3 sm:mb-4"> 
-          1. Preprocessor
+          The preprocessor service rescales, and pads input images to the desired shape of 1024x1024. The input image has a string which points to the 
+          S3 bucket being used. The processed image is also a string to an S3 bucket. Scaling values are included so we are able to reverse the scaling transformation
+          when drawing the bounding box on the frontend.
       </p>
+
+      <p class="mb-3 sm:mb-4"> 
+        2. Embedder
+      </p>
+
+    <div class="flex justify-center items-center mt-4 mb-4">
+      <img 
+        src="http://similarfaces2.me/embedder.png" 
+        alt="Preprocessor service definition" 
+        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
+      />
+      </div>
+      <p class="mb-3 sm:mb-4"> 
+          The embedder model performs facial recognition tasks on the preprocessed image. The results are the bounding box coordinates, eye coordinates, 
+          and a vector of floats which is the embedding that it computed. The backend will use this embedding to query the vector database.
+      </p>
+
+      <p class="mb-3 sm:mb-4"> 
+        3. Analyzer
+      </p>
+
+    <div class="flex justify-center items-center mt-4 mb-4">
+      <img 
+        src="http://similarfaces2.me/analyzer.png" 
+        alt="Preprocessor service definition" 
+        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
+      />
+      </div>
+      <p class="mb-3 sm:mb-4"> 
+          The analyzer model performs facial recognition tasks centered around classification. 
+          The request follows the same pattern as the others, passing in an image to analyze. There is also a model 
+          parameter, this is for the future if I ever decide I want to only want the emotion, race, age or gender model to run, but right now it is 
+          unused. This request returns strings which are the classification labels.
+      </p>
+
 
     <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">Scaling</h3>
     <p class="mb-3 sm:mb-4"> 
