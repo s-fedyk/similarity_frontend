@@ -1,16 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>SimilarFaces2Me - Facial Recognition App</title>
   <!-- Tailwind CSS (CDN) -->
-  
+
   <link rel="stylesheet" href="styles/styles.css">
   <script src="scripts/app.js"></script>
 </head>
+
 <body class="bg-gray-900 text-gray-100 flex flex-col items-center min-h-screen p-4 md:p-8 font-jetbrains">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Main Heading -->
   <h1 class="text-3xl md:text-4xl font-bold mb-8">
     similarfaces2.me
@@ -19,573 +20,449 @@
   <h2 class="text-1xl md:text-4xl font-bold mb-8">
     A distributed facial recognition pipeline
   </h2>
-<div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">
-      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Service Notice</h2>    
-        <p class="mb-3 sm:mb-4">
-          Development scheduled for 7pm-1am MST daily, expect outages.
-        </p>
-      <p class="mb-3 sm:mb-4">
-        The app is currently about 20x slower than it should be. I am waiting on AWS to allocate more resources to me.
-      </p>
-    </div>
+  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">
+    <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Service Notice</h2>
+    <p class="mb-3 sm:mb-4">
+      Development scheduled for 7pm-1am MST daily, expect outages.
+    </p>
+    <p class="mb-3 sm:mb-4">
+      The app is currently about 20x slower than it should be. I am waiting on AWS to allocate more resources to me.
+    </p>
+  </div>
   <!-- Random Face Button -->
-  <button
-    id="random-image-btn"
-    class="bg-gray-800 text-gray-100 px-4 mb-6 py-2 mt-4 rounded-md hover:bg-teal-400 hover:text-teal-900 transition"
-  >
+  <button id="random-image-btn"
+    class="bg-gray-800 text-gray-100 px-4 mb-6 py-2 mt-4 rounded-md hover:bg-teal-400 hover:text-teal-900 transition">
     Choose a random existing face
   </button>
   <!-- Upload Container -->
   <div class="flex flex-col items-center bg-gray-800 rounded-md w-62 text-center mb-8">
     <!-- Button-like label that triggers input -->
-  <label
-    id="upload-label"
-    for="image-upload"
-    class="border-2 border-dashed border-gray-500 text-gray-400 p-6 w-full rounded-md cursor-pointer 
+    <label id="upload-label" for="image-upload" class="border-2 border-dashed border-gray-500 text-gray-400 p-6 w-full rounded-md cursor-pointer 
            hover:border-teal-400 hover:text-teal-400 transition flex flex-col items-center">
 
-    <input 
-      id="image-upload"
-      type="file"
-      accept="image/*"
-      class="hidden"
-    />
-    <div
-      id="image-preview"
-      class="flex w-48 items-center h-48 bg-gray-700 border-2 border-gray-600 rounded-md justify-center relative"
-        >
-          
-       <div
-          id="spinner"
-          class="bg-gray-800 bg-opacity-10 flex items-center justify-center rounded-md hidden"
-        >
-          <svg
-            class="animate-spin h-8 w-8 text-teal-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
-            ></path>
+      <input id="image-upload" type="file" accept="image/*" class="hidden" />
+      <div id="image-preview"
+        class="flex w-48 items-center h-48 bg-gray-700 border-2 border-gray-600 rounded-md justify-center relative">
+
+        <div id="spinner" class="bg-gray-800 bg-opacity-10 flex items-center justify-center rounded-md hidden">
+          <svg class="animate-spin h-8 w-8 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
           </svg>
         </div>
-    </div>
-  </label>
+      </div>
+    </label>
   </div>
-<!-- Facial Analysis Results -->
-<div id="facial-analysis" class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md mb-6">
-  <h2 class="text-xl sm:text-2xl font-semibold mb-4">Facial Analysis</h2>
-  
-  <!-- Analysis Details -->
-  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 text-gray-100">
-    <div class="bg-gray-700 p-4 rounded-md text-center">
-      <h3 class="text-lg font-bold mb-2">Age</h3>
-      <p id="age-result" class="text-teal-400 text-xl break-words">--</p>
-    </div>
-    <div class="bg-gray-700 p-4 rounded-md text-center">
-      <h3 class="text-lg font-bold mb-2">Gender</h3>
-      <p id="gender-result" class="text-teal-400 text-xl break-words">--</p>
-    </div>
-    <div class="bg-gray-700 p-4 rounded-md text-center">
-      <h3 class="text-lg font-bold mb-2">Emotion</h3>
-      <p id="emotion-result" class="text-teal-400 text-xl break-words">--</p>
-    </div>
-    <div class="bg-gray-700 p-4 rounded-md text-center">
-      <h3 class="text-lg font-bold mb-2">Race</h3>
-      <p id="race-result" class="text-teal-400 text-xl break-words">--</p>
+  <!-- Facial Analysis Results -->
+  <div id="facial-analysis" class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md mb-6">
+    <h2 class="text-xl sm:text-2xl font-semibold mb-4">Facial Analysis</h2>
+
+    <!-- Analysis Details -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 text-gray-100">
+      <div class="bg-gray-700 p-4 rounded-md text-center">
+        <h3 class="text-lg font-bold mb-2">Age</h3>
+        <p id="age-result" class="text-teal-400 text-xl break-words">--</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded-md text-center">
+        <h3 class="text-lg font-bold mb-2">Gender</h3>
+        <p id="gender-result" class="text-teal-400 text-xl break-words">--</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded-md text-center">
+        <h3 class="text-lg font-bold mb-2">Emotion</h3>
+        <p id="emotion-result" class="text-teal-400 text-xl break-words">--</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded-md text-center">
+        <h3 class="text-lg font-bold mb-2">Race</h3>
+        <p id="race-result" class="text-teal-400 text-xl break-words">--</p>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Results Container -->
-<div class="w-full max-w-2xl mb-4">
-  <!-- Swipe Indicator -->
-  <div
-  id="finger-swipe"
-  class="absolute left-1/2 w-36 h-36 bg-transparent z-10 animate-swipe flex opacity-15 transform -translate-x-1/2 pointer-events-none"
->
-  <svg
-    clip-rule="evenodd"
-    fill-rule="evenodd"
-    stroke-linejoin="round"
-    stroke-miterlimit="2"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-    class="fill-gray-400 pointer-events-none"
-  >
-    <path
-      d="m10.978 14.999v3.251c0 .412-.335.75-.752.75-.188 0-.375-.071-.518-.206-1.775-1.685-4.945-4.692-6.396-6.069-.2-.189-.312-.452-.312-.725 0-.274.112-.536.312-.725 1.451-1.377 4.621-4.385 6.396-6.068.143-.136.33-.207.518-.207.417 0 .752.337.752.75v3.251h9.02c.531 0 1.002.47 1.002 1v3.998c0 .53-.471 1-1.002 1zm-1.5-7.506-4.751 4.507 4.751 4.507v-3.008h10.022v-2.998h-10.022z"
-      fill-rule="nonzero"
-    ></path>
-  </svg>
+  <div class="w-full max-w-2xl mb-4">
+    <!-- Swipe Indicator -->
+    <div id="finger-swipe"
+      class="absolute left-1/2 w-36 h-36 bg-transparent z-10 animate-swipe flex opacity-15 transform -translate-x-1/2 pointer-events-none">
+      <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg" class="fill-gray-400 pointer-events-none">
+        <path
+          d="m10.978 14.999v3.251c0 .412-.335.75-.752.75-.188 0-.375-.071-.518-.206-1.775-1.685-4.945-4.692-6.396-6.069-.2-.189-.312-.452-.312-.725 0-.274.112-.536.312-.725 1.451-1.377 4.621-4.385 6.396-6.068.143-.136.33-.207.518-.207.417 0 .752.337.752.75v3.251h9.02c.531 0 1.002.47 1.002 1v3.998c0 .53-.471 1-1.002 1zm-1.5-7.506-4.751 4.507 4.751 4.507v-3.008h10.022v-2.998h-10.022z"
+          fill-rule="nonzero"></path>
+      </svg>
 
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    class="fill-gray-400 pointer-events-none"
-  >
-    <path
-      d="M18.536 7.555c-1.188-.252-4.606-.904-5.536-1.088v-3.512c0-1.629-1.346-2.955-3-2.955s-3 1.326-3 2.955v7.457c-.554-.336-1.188-.621-1.838-.715-1.822-.262-3.162.94-3.162 2.498 0 .805.363 1.613 1.022 2.271 3.972 3.972 5.688 5.125 6.059 9.534h9.919v-1.748c0-5.154 3-6.031 3-10.029 0-2.448-1.061-4.157-3.464-4.668zm.357 8.022c-.821 1.483-1.838 3.319-1.891 6.423h-6.13c-.726-3.82-3.81-6.318-6.436-8.949-.688-.686-.393-1.37.442-1.373 1.263-.006 3.06 1.884 4.122 3.205v-11.928c0-.517.458-.955 1-.955s1 .438 1 .955v6.948c0 .315.256.571.572.571.314 0 .57-.256.57-.571v-.575c0-.534.49-.938 1.014-.833.398.079.686.428.686.833v1.273c0 .315.256.571.571.571s.571-.256.571-.571v-.83c0-.531.487-.932 1.008-.828.396.078.682.424.682.828v1.533c0 .315.256.571.571.571s.571-.256.571-.571v-.912c0-.523.545-.867 1.018-.646.645.305 1.166.932 1.166 2.477 0 1.355-.465 2.193-1.107 3.354z"
-    ></path>
-  </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-gray-400 pointer-events-none">
+        <path
+          d="M18.536 7.555c-1.188-.252-4.606-.904-5.536-1.088v-3.512c0-1.629-1.346-2.955-3-2.955s-3 1.326-3 2.955v7.457c-.554-.336-1.188-.621-1.838-.715-1.822-.262-3.162.94-3.162 2.498 0 .805.363 1.613 1.022 2.271 3.972 3.972 5.688 5.125 6.059 9.534h9.919v-1.748c0-5.154 3-6.031 3-10.029 0-2.448-1.061-4.157-3.464-4.668zm.357 8.022c-.821 1.483-1.838 3.319-1.891 6.423h-6.13c-.726-3.82-3.81-6.318-6.436-8.949-.688-.686-.393-1.37.442-1.373 1.263-.006 3.06 1.884 4.122 3.205v-11.928c0-.517.458-.955 1-.955s1 .438 1 .955v6.948c0 .315.256.571.572.571.314 0 .57-.256.57-.571v-.575c0-.534.49-.938 1.014-.833.398.079.686.428.686.833v1.273c0 .315.256.571.571.571s.571-.256.571-.571v-.83c0-.531.487-.932 1.008-.828.396.078.682.424.682.828v1.533c0 .315.256.571.571.571s.571-.256.571-.571v-.912c0-.523.545-.867 1.018-.646.645.305 1.166.932 1.166 2.477 0 1.355-.465 2.193-1.107 3.354z">
+        </path>
+      </svg>
 
-  <svg
-    clip-rule="evenodd"
-    fill-rule="evenodd"
-    stroke-linejoin="round"
-    stroke-miterlimit="2"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-    class="fill-gray-400 pointer-events-none"
-  >
-    <path
-      d="m13.022 14.999v3.251c0 .412.335.75.752.75.188 0 .375-.071.518-.206 1.775-1.685 4.945-4.692 6.396-6.069.2-.189.312-.452.312-.725 0-.274-.112-.536-.312-.725-1.451-1.377-4.621-4.385-6.396-6.068-.143-.136-.33-.207-.518-.207-.417 0-.752.337-.752.75v3.251h-9.02c-.531 0-1.002.47-1.002 1v3.998c0 .53.471 1 1.002 1zm1.5-4.498v-3.008l4.751 4.507-4.751 4.507v-3.008h-10.022v-2.998z"
-      fill-rule="nonzero"
-    ></path>
-  </svg>
-</div>
-<div id="scroll-container" class="relative w-full max-w-2xl overflow-x-auto flex mb-8">  
-  <div class="flex gap-4 mb-8">
-    <div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
+      <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg" class="fill-gray-400 pointer-events-none">
+        <path
+          d="m13.022 14.999v3.251c0 .412.335.75.752.75.188 0 .375-.071.518-.206 1.775-1.685 4.945-4.692 6.396-6.069.2-.189.312-.452.312-.725 0-.274-.112-.536-.312-.725-1.451-1.377-4.621-4.385-6.396-6.068-.143-.136-.33-.207-.518-.207-.417 0-.752.337-.752.75v3.251h-9.02c-.531 0-1.002.47-1.002 1v3.998c0 .53.471 1 1.002 1zm1.5-4.498v-3.008l4.751 4.507-4.751 4.507v-3.008h-10.022v-2.998z"
+          fill-rule="nonzero"></path>
+      </svg>
     </div>
-
-    <div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
-    </div>
-    <div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
-    </div>
-  <div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
-    </div>
-<div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
-    </div>
-  <div
-        class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-      >
+    <div id="scroll-container" class="relative w-full max-w-2xl overflow-x-auto flex mb-8">
+      <div class="flex gap-4 mb-8">
         <div
-          class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-          style="background-image: url('');"
-        ></div>
-      </div>
-<div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('example-face3.jpg');"
-      ></div>
-    </div>
-    <!-- Continue up to 10 cards -->
-  </div>
-</div>
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
 
-  <!-- About Section -->
-  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">    
-      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">About</h2>    
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover" style="background-image: url('');"></div>
+        </div>
+        <div
+          class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0">
+          <div class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+            style="background-image: url('example-face3.jpg');"></div>
+        </div>
+        <!-- Continue up to 10 cards -->
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">About</h2>
       <p class="mb-3 sm:mb-4">
-  Hello, 
-  <a 
-    href="https://www.linkedin.com/in/sfedyk/" 
-    class="text-teal-400 hover:text-teal-600 transition">
-    I am a software engineer
-  </a> 
-  currently studying at the University of Alberta.
-</p>
-      <p class="mb-3 sm:mb-4">
-        This is a machine learning project that I built to develop my skills in deploying, serving and scaling machine learning models.
+        Hello,
+        <a href="https://www.linkedin.com/in/sfedyk/" class="text-teal-400 hover:text-teal-600 transition">
+          I am a software engineer
+        </a>
+        currently studying at the University of Alberta.
       </p>
       <p class="mb-3 sm:mb-4">
-        Recently I was looking for projects to build to show off my technical expertise, I wanted something that was relatively compute 
+        This is a machine learning project that I built to develop my skills in deploying, serving and scaling machine
+        learning models.
+      </p>
+      <p class="mb-3 sm:mb-4">
+        Recently I was looking for projects to build to show off my technical expertise, I wanted something that was
+        relatively compute
         intensive because results are impressive when they are fast.
         Online, I came across sites online offering similar features, except they were awfully slow. This inspired
-        me to build something that is hopefully much faster, offers equally good face recognition features, and is not plastered with ads.
+        me to build something that is hopefully much faster, offers equally good face recognition features, and is not
+        plastered with ads.
       </p>
       <p class="mb-3 sm:mb-4">
-        There is zero caching of results in this application. Every inference request is ran fresh. What you see 
+        There is zero caching of results in this application. Every inference request is ran fresh. What you see
         is the results being computed and delivered to you in real time.
       </p>
-  </div>
-
-  <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-6">    
-   <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">The Tech Stack</h2>    
-      <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10 w-full">
-      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-1"
-        >
-          <span>Go &amp gRPC</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-1" class="mt-2 p-5 hidden">
-          <p class="text-gray-300">
-                The 'middleware' or 'backend' of this application is written in Go. Go was chosen for its speed,
-                great standard library and package manager. All service-to-service requests are through gRPC.
-          </p>
-        </div>
-      </li>
-      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-2"
-        >
-          <span>Deepface &amp; Python</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-2" class="mt-2 p-5 hidden">
-          <p class="text-gray-300">
-                The model and preprocessing servers of this application are written in Python.
-                For quick interfacing with the models, I am using the DeepFace library. In order to allow
-                use of the Neuron recompiled models and adjust to the distributed design, 
-                some of the the library internals had to be messsed with. Python was chosen because of
-                its mature machine learning and image processing ecosystem.
-          </p>
-        </div>
-      </li>
-      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-3"
-        >
-          <span>AWS</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24" stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-3" class="mt-2 p-5 hidden">
-          <p class="text-gray-300 mb-6">
-            This entire application is powered by Amazon Web Services. 
-          </p>
-          <p class="text-gray-300 mb-6">
-            S3 is to serve this static website, as a model registry, and as temporary storage for intermediary 
-            model outputs.
-          </p>
-          <p class="text-gray-300 mb-6">
-            EKS powers the scaling and deployments of the microservices needed to run this application. Currently there
-            four services running. The 'backend' of this application acts as middleware, distributing user 
-            requests to a preprocessor, facial analysis, embedding models and the vector database.
-          </p>
-          <p class="text-gray-300 mb-6">
-            Route53 was used for the purchase of this domain, the creation of DNS records, as well as to faciliate routing to my 
-            application load balancer and frontend.
-          </p>
-          <p class="text-gray-300 mb-6">
-            The backend/middleware as well as the preprocessor services run on t3.medium instances. Any services that are doing 
-            inference run on inf1.xlarge.
-          </p>
-        </div>
-      </li>
-      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-4"
-        >
-          <span>Kubernetes &amp Docker</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-4" class="mt-2 p-5 hidden">
-          <p class="text-gray-300 mb-6">
-            Kubernetes manifests define my deployments, the resources available to the deployments, replication counts,
-            which services are deployed on which node groups, and which services are visible to one another.
-          </p>
-          <p class="text-gray-300 mb-6">
-            There are two Dockerfiles defining the containers for this application. The backend service runs on an official Golang image. The preprocessor
-            and model servers are running official Amazon Deep Learning container images. These images contain drivers specific to the Inferentia architecture, 
-            which are required to utilize their hardware.
-          </p>
-        </div>
-      </li>
-      <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-5"
-        >
-          <span>Milvus Vector Database</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-5" class="mt-2 p-5 hidden">
-          <p class="text-gray-300">
-            A vector database facilitates the 'similarity' search between images using embeddings. In this application, it can be 
-            used to find images of a specific person in the database if the 'random' button is clicked, or to try to find faces
-            that the algorithm thinks is similar to the one you upload.
-          </p>
-        </div>
-      </li>
-
-    <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
-        <button
-          class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
-          aria-expanded="false"
-          data-target="content-6"
-        >
-          <span>Neuron Compiler</span>
-          <svg
-            class="w-4 h-4 transform transition-transform duration-200"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-        <div id="content-6" class="mt-2 p-5 hidden">
-          <p class="text-gray-300">
-            Because I am doing inference on inf1.xlarge instances, I also need the models in a format that the Neuron runtime can understand
-            and run. The models and weights I am using must be recompiled for this. I store these precompiled models in an S3 bucket, 
-            which the model servers will pull, and initialize with on startup.
-          </p>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="w-full max-w-2xl bg-gray-800 pt-4 sm:p-6 rounded-md leading-relaxed">    
-   <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Technical Discussion</h2>    
-
-    <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">System Design</h3>    
-
-    <div class="flex justify-center items-center mt-4 mb-4">
-      <img 
-        src="http://similarfaces2.me/similarfaces2me.jpg" 
-        alt="System Design Diagram" 
-        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
-      />
     </div>
-    <p class="mb-3 sm:mb-4"> 
-        Let's go over the flow of how requests are processed, and why I am using certain technologies.
-    </p>
-    <ol class="mb-3">
-          <li>
-            1. A user sends a request through the frontend. This is through simple HTTP with an image as the payload. 
-            This is recieved by my Go backend, converted into jpeg (ideally, this conversion should be in my preprocessing step), and then temporarily 
-            uploaded into an S3 bucket for further processing on different nodes. Since facial recognition pipelines are multi stage, I attempt to split
-            up processing steps into individual microservices.
-          </li>
-          <li class="mt-4">
-            2. After the image is available in S3, the middleware triggers a call to the preprocessing service.
-            All of the internal communications is handled via gRPC.           
-          </li>
-          <li class="mt-4">
-            3. The preprocessing service downloads the image from S3, and then rescales, and pads the image into a 1024x1024 format
-            which my face extraction model expects. 
-            The processed image is then uploaded to S3. The 1024x1024 shape is an arbitrary shape I decided on after compiling my models with the AWS Neuron compiler.
-            Compilation produces a model with restricted input sizing to most effectively take advantage of hardware-specific  optimizations. I had thought about 
-            compiling 
-            my facial detection model multiple times for different input sizes, and then using a bucketing technique (images of size A use precompiled model X,
-            while images of size B use precompiled model Y...) 
-            on different shapes to provide optimal detection performance for different image sizes, but I am restricted by time.
-          </li>
-          <li class="mt-4">
-            4. After the preprocessed image is available, the middleware triggers multiple inference calls (in parallel) to the model servers. The model servers
-            pull down the preprocessed images from S3, and then run their models on them. There are currently 6 different models that run: face extraction, 
-            face embedding, emotion classification, age classification, race classification and gender classification.
-            However, they are inefficiently distributed across two different inference nodes because I am limited by time (and money!). Currently, 
-            face extraction actually runs twice. Once in the embedding model servers, and once in the facial analysis model servers. 
-            With 3 inference nodes, I would add a face extraction similar to the preprocessing step which produces an extracted face image and stores it in S3.
-            This image could then be pulled down for use by all the previously mentioned models, allowing more effective resource re-use. 
-            With 6 inference nodes, every model would get its own server, and re-use the face extraction image.
-          </li>
-          <li class="mt-4">
-            5. As soon as the embedding is available, it is used to query the vector database for similar faces. This database
-            was filled offline, using my local machine to create embeddings. It holds over 200k queryable embeddings. The model I used for embedding was Meta/Facebook's
-            Facenet512d. I chose this because it offers relatively small sized embedding vectors (dim 512), while also offering excellent discriminatory 
-            performance.
-            I am not self-hosting/managing milvus vectordb on EKS. I was managing it myself at the beginning of this project because I believe in doing things 
-            the hard way while learning, 
-            however the costs became prohibitive since the simplest deployment of Milvus requires a minimum resource commitment of 3 m6i.xlarge instances, which
-            are expensive to keep up. 
-            The database response does not contain an image blob, but rather a path to an S3 bucket. This is once again to reduce the sizes of my responses, 
-            and push the availability portion of this project unto AWS as much as I can.
-          </li>
-          <li class="mt-4">
-            6. The frontend recieves the response containing paths to S3 resources, facial analysis results and populates them accordingly.
-          </li>
-    </ol>
 
-    <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">Service Definitions</h3>
-    <p class="mb-3 sm:mb-4"> 
-        Let's go over the service definitions to solidify the function of each service.
-    </p>
-    <p class="mb-3 sm:mb-4"> 
-        If you've never seen proto stubs, that's OK. A protobuf file allows us to have a consistent, typed interface between services communicating
-        over a network. Imagine you are a software engineer working on a team that establishing a connection with a service owned by another team, written in 
-        another language. Instead of having to read through an API documentation page to figure out what types are needed and how to convert them into your 
-        language, you could grab the proto file that team is maintaining, and then compile it with a proto tool for your specific langugage, which will autogenerate
-        client code specific to your language.
-    </p>
-    <p class="mb-3 sm:mb-4"> 
-        1. Preprocessor
-    </p>
-    <div class="flex justify-center items-center mt-4 mb-4">
-      <img 
-        src="http://similarfaces2.me/preprocessor.png" 
-        alt="Preprocessor service definition" 
-        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
-      />
+    <div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-6">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">The Tech Stack</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 w-4/5 max-w-5xl pb-10 w-full">
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-1">
+            <span>Go &amp gRPC</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-1" class="mt-2 p-5 hidden">
+            <p class="text-gray-300">
+              The 'middleware' or 'backend' of this application is written in Go. Go was chosen for its speed,
+              great standard library and package manager. All service-to-service requests are through gRPC.
+            </p>
+          </div>
+        </li>
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-2">
+            <span>Deepface &amp; Python</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-2" class="mt-2 p-5 hidden">
+            <p class="text-gray-300">
+              The model and preprocessing servers of this application are written in Python.
+              For quick interfacing with the models, I am using the DeepFace library. In order to allow
+              use of the Neuron recompiled models and adjust to the distributed design,
+              some of the the library internals had to be messsed with. Python was chosen because of
+              its mature machine learning and image processing ecosystem.
+            </p>
+          </div>
+        </li>
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-3">
+            <span>AWS</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-3" class="mt-2 p-5 hidden">
+            <p class="text-gray-300 mb-6">
+              This entire application is powered by Amazon Web Services.
+            </p>
+            <p class="text-gray-300 mb-6">
+              S3 is to serve this static website, as a model registry, and as temporary storage for intermediary
+              model outputs.
+            </p>
+            <p class="text-gray-300 mb-6">
+              EKS powers the scaling and deployments of the microservices needed to run this application. Currently
+              there
+              four services running. The 'backend' of this application acts as middleware, distributing user
+              requests to a preprocessor, facial analysis, embedding models and the vector database.
+            </p>
+            <p class="text-gray-300 mb-6">
+              Route53 was used for the purchase of this domain, the creation of DNS records, as well as to faciliate
+              routing to my
+              application load balancer and frontend.
+            </p>
+            <p class="text-gray-300 mb-6">
+              The backend/middleware as well as the preprocessor services run on t3.medium instances. Any services that
+              are doing
+              inference run on inf1.xlarge.
+            </p>
+          </div>
+        </li>
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-4">
+            <span>Kubernetes &amp Docker</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-4" class="mt-2 p-5 hidden">
+            <p class="text-gray-300 mb-6">
+              Kubernetes manifests define my deployments, the resources available to the deployments, replication
+              counts,
+              which services are deployed on which node groups, and which services are visible to one another.
+            </p>
+            <p class="text-gray-300 mb-6">
+              There are two Dockerfiles defining the containers for this application. The backend service runs on an
+              official Golang image. The preprocessor
+              and model servers are running official Amazon Deep Learning container images. These images contain drivers
+              specific to the Inferentia architecture,
+              which are required to utilize their hardware.
+            </p>
+          </div>
+        </li>
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-5">
+            <span>Milvus Vector Database</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-5" class="mt-2 p-5 hidden">
+            <p class="text-gray-300">
+              A vector database facilitates the 'similarity' search between images using embeddings. In this
+              application, it can be
+              used to find images of a specific person in the database if the 'random' button is clicked, or to try to
+              find faces
+              that the algorithm thinks is similar to the one you upload.
+            </p>
+          </div>
+        </li>
+
+        <li class="bg-gray-900 p-4 rounded-md w-full hover:bg-teal-800 transition">
+          <button class="w-full text-left focus:outline-none expandable-button flex justify-between items-center"
+            aria-expanded="false" data-target="content-6">
+            <span>Neuron Compiler</span>
+            <svg class="w-4 h-4 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="content-6" class="mt-2 p-5 hidden">
+            <p class="text-gray-300">
+              Because I am doing inference on inf1.xlarge instances, I also need the models in a format that the Neuron
+              runtime can understand
+              and run. The models and weights I am using must be recompiled for this. I store these precompiled models
+              in an S3 bucket,
+              which the model servers will pull, and initialize with on startup.
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="w-full max-w-2xl bg-gray-800 pt-4 sm:p-6 rounded-md leading-relaxed">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Technical Discussion</h2>
+
+      <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">System Design</h3>
+
+      <div class="flex justify-center items-center mt-4 mb-4">
+        <img src="http://similarfaces2.me/similarfaces2me.jpg" alt="System Design Diagram"
+          class="max-w-full h-auto border-2 border-gray-700 rounded-md" />
       </div>
-      <p class="mb-3 sm:mb-4"> 
-          The preprocessor service rescales, and pads input images to the desired shape of 1024x1024. The input image has a string which points to the 
-          S3 bucket being used. The processed image is also a string to an S3 bucket. Scaling values are included so we are able to reverse the scaling transformation
-          when drawing the bounding box on the frontend.
+      <p class="mb-3 sm:mb-4">
+        Let's go over the flow of how requests are processed, and why I am using certain technologies.
+      </p>
+      <ol class="mb-3">
+        <li>
+          1. A user sends a request through the frontend. This is through simple HTTP with an image as the payload.
+          This is recieved by my Go backend, converted into jpeg (ideally, this conversion should be in my preprocessing
+          step), and then temporarily
+          uploaded into an S3 bucket for further processing on different nodes. Since facial recognition pipelines are
+          multi stage, I attempt to split
+          up processing steps into individual microservices.
+        </li>
+        <li class="mt-4">
+          2. After the image is available in S3, the middleware triggers a call to the preprocessing service.
+          All of the internal communications is handled via gRPC.
+        </li>
+        <li class="mt-4">
+          3. The preprocessing service downloads the image from S3, and then rescales, and pads the image into a
+          1024x1024 format
+          which my face extraction model expects.
+          The processed image is then uploaded to S3. The 1024x1024 shape is an arbitrary shape I decided on after
+          compiling my models with the AWS Neuron compiler.
+          Compilation produces a model with restricted input sizing to most effectively take advantage of
+          hardware-specific optimizations. I had thought about
+          compiling
+          my facial detection model multiple times for different input sizes, and then using a bucketing technique
+          (images of size A use precompiled model X,
+          while images of size B use precompiled model Y...)
+          on different shapes to provide optimal detection performance for different image sizes, but I am restricted by
+          time.
+        </li>
+        <li class="mt-4">
+          4. After the preprocessed image is available, the middleware triggers multiple inference calls (in parallel)
+          to the model servers. The model servers
+          pull down the preprocessed images from S3, and then run their models on them. There are currently 6 different
+          models that run: face extraction,
+          face embedding, emotion classification, age classification, race classification and gender classification.
+          However, they are inefficiently distributed across two different inference nodes because I am limited by time
+          (and money!). Currently,
+          face extraction actually runs twice. Once in the embedding model servers, and once in the facial analysis
+          model servers.
+          With 3 inference nodes, I would add a face extraction similar to the preprocessing step which produces an
+          extracted face image and stores it in S3.
+          This image could then be pulled down for use by all the previously mentioned models, allowing more effective
+          resource re-use.
+          With 6 inference nodes, every model would get its own server, and re-use the face extraction image.
+        </li>
+        <li class="mt-4">
+          5. As soon as the embedding is available, it is used to query the vector database for similar faces. This
+          database
+          was filled offline, using my local machine to create embeddings. It holds over 200k queryable embeddings. The
+          model I used for embedding was Meta/Facebook's
+          Facenet512d. I chose this because it offers relatively small sized embedding vectors (dim 512), while also
+          offering excellent discriminatory
+          performance.
+          I am not self-hosting/managing milvus vectordb on EKS. I was managing it myself at the beginning of this
+          project because I believe in doing things
+          the hard way while learning,
+          however the costs became prohibitive since the simplest deployment of Milvus requires a minimum resource
+          commitment of 3 m6i.xlarge instances, which
+          are expensive to keep up.
+          The database response does not contain an image blob, but rather a path to an S3 bucket. This is once again to
+          reduce the sizes of my responses,
+          and push the availability portion of this project unto AWS as much as I can.
+        </li>
+        <li class="mt-4">
+          6. The frontend recieves the response containing paths to S3 resources, facial analysis results and populates
+          them accordingly.
+        </li>
+      </ol>
+
+      <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">Service Definitions</h3>
+      <p class="mb-3 sm:mb-4">
+        Let's go over the service definitions to solidify the function of each service.
+      </p>
+      <p class="mb-3 sm:mb-4">
+        If you've never seen proto stubs, that's OK. A protobuf file allows us to have a consistent, typed interface
+        between services communicating
+        over a network. Imagine you are a software engineer working on a team that establishing a connection with a
+        service owned by another team, written in
+        another language. Instead of having to read through an API documentation page to figure out what types are
+        needed and how to convert them into your
+        language, you could grab the proto file that team is maintaining, and then compile it with a proto tool for your
+        specific langugage, which will autogenerate
+        client code specific to your language.
+      </p>
+      <p class="mb-3 sm:mb-4">
+        1. Preprocessor
+      </p>
+      <div class="flex justify-center items-center mt-4 mb-4">
+        <img src="http://similarfaces2.me/preprocessor.png" alt="Preprocessor service definition"
+          class="max-w-full h-auto border-2 border-gray-700 rounded-md" />
+      </div>
+      <p class="mb-3 sm:mb-4">
+        The preprocessor service rescales, and pads input images to the desired shape of 1024x1024. The input image has
+        a string which points to the
+        S3 bucket being used. The processed image is also a string to an S3 bucket. Scaling values are included so we
+        are able to reverse the scaling transformation
+        when drawing the bounding box on the frontend.
       </p>
 
-      <p class="mb-3 sm:mb-4"> 
+      <p class="mb-3 sm:mb-4">
         2. Embedder
       </p>
 
-    <div class="flex justify-center items-center mt-4 mb-4">
-      <img 
-        src="http://similarfaces2.me/embedder.png" 
-        alt="Preprocessor service definition" 
-        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
-      />
+      <div class="flex justify-center items-center mt-4 mb-4">
+        <img src="http://similarfaces2.me/embedder.png" alt="Preprocessor service definition"
+          class="max-w-full h-auto border-2 border-gray-700 rounded-md" />
       </div>
-      <p class="mb-3 sm:mb-4"> 
-          The embedder model performs facial recognition tasks on the preprocessed image. The results are the bounding box coordinates, eye coordinates, 
-          and a vector of floats which is the embedding that it computed. The backend will use this embedding to query the vector database.
+      <p class="mb-3 sm:mb-4">
+        The embedder model performs facial recognition tasks on the preprocessed image. The results are the bounding box
+        coordinates, eye coordinates,
+        and a vector of floats which is the embedding that it computed. The backend will use this embedding to query the
+        vector database.
       </p>
 
-      <p class="mb-3 sm:mb-4"> 
+      <p class="mb-3 sm:mb-4">
         3. Analyzer
       </p>
 
-    <div class="flex justify-center items-center mt-4 mb-4">
-      <img 
-        src="http://similarfaces2.me/analyzer.png" 
-        alt="Preprocessor service definition" 
-        class="max-w-full h-auto border-2 border-gray-700 rounded-md"
-      />
+      <div class="flex justify-center items-center mt-4 mb-4">
+        <img src="http://similarfaces2.me/analyzer.png" alt="Preprocessor service definition"
+          class="max-w-full h-auto border-2 border-gray-700 rounded-md" />
       </div>
-      <p class="mb-3 sm:mb-4"> 
-          The analyzer model performs facial recognition tasks centered around classification. 
-          The request follows the same pattern as the others, passing in an image to analyze. There is also a model 
-          parameter, this is for the future if I ever decide I want to only want the emotion, race, age or gender model to run, but right now it is 
-          unused. This request returns strings which are the classification labels.
+      <p class="mb-3 sm:mb-4">
+        The analyzer model performs facial recognition tasks centered around classification.
+        The request follows the same pattern as the others, passing in an image to analyze. There is also a model
+        parameter, this is for the future if I ever decide I want to only want the emotion, race, age or gender model to
+        run, but right now it is
+        unused. This request returns strings which are the classification labels.
       </p>
 
 
-    <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">Scaling</h3>
-    <p class="mb-3 sm:mb-4"> 
-        The distributed architecture of this app was built with scaling in mind. Because each service in the pipeline is (relatively) isolated
-        I am able to set up autoscaling node groups in EKS which will spin up a new backend, model server, or preprocessor whenever there is continuous load
-        applied to my services (I don't do this right now because I don't want bezos to take all of my tuition money). My Kubernetes services deployments 
-        and services will then adjust to these nodegroups, create service replicas and route requests to them when they are available.
-    </p>
-  </div>
+      <h3 class="text-xl sm:text-1xl font-semibold mb-3 sm:mb-4">Scaling</h3>
+      <p class="mb-3 sm:mb-4">
+        The distributed architecture of this app was built with scaling in mind. Because each service in the pipeline is
+        (relatively) isolated
+        I am able to set up autoscaling node groups in EKS which will spin up a new backend, model server, or
+        preprocessor whenever there is continuous load
+        applied to my services (I don't do this right now because I don't want bezos to take all of my tuition money).
+        My Kubernetes services deployments
+        and services will then adjust to these nodegroups, create service replicas and route requests to them when they
+        are available.
+      </p>
+    </div>
   </div>
 
-<script>
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const buttons = document.querySelectorAll('.expandable-button');
 
@@ -611,5 +488,5 @@
     });
   </script>
 </body>
-</html>
 
+</html>
