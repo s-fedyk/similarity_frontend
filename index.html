@@ -17,8 +17,17 @@
   </h1>
 
   <h2 class="text-1xl md:text-4xl font-bold mb-8">
-    A distributed ML inference pipeline
+    A distributed facial recognition pipeline
   </h2>
+<div class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Service Notice</h2>    
+        <p class="mb-3 sm:mb-4">
+          Development scheduled for 7pm-1am MST daily, expect outages.
+        </p>
+      <p class="mb-3 sm:mb-4">
+        The app is currently about 20x slower than it should be. I am waiting on AWS to allocate more resources to me.
+      </p>
+    </div>
   <!-- Random Face Button -->
   <button
     id="random-image-btn"
@@ -189,14 +198,14 @@
         style="background-image: url('');"
       ></div>
     </div>
-<div
-      class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
-    >
-      <div
-        class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
-        style="background-image: url('');"
-      ></div>
-    </div>
+  <div
+        class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
+      >
+        <div
+          class="w-full h-36 bg-gray-700 rounded-md bg-center bg-cover"
+          style="background-image: url('');"
+        ></div>
+      </div>
 <div
       class="w-36 bg-gray-800 p-4 rounded-md text-center transition-transform transform hover:-translate-y-1 flex-shrink-0"
     >
@@ -326,7 +335,7 @@
             This entire application is powered by Amazon Web Services. 
           </p>
           <p class="text-gray-300 mb-6">
-            S3 is to serve this static website, as a model registry, and as a feature store for intermediary 
+            S3 is to serve this static website, as a model registry, and as temporary storage for intermediary 
             model outputs.
           </p>
           <p class="text-gray-300 mb-6">
@@ -460,23 +469,18 @@
           <li>
             1. A user sends a request through the frontend. This is through simple HTTP with an image as the payload. 
             This is recieved by my Go backend, converted into jpeg (ideally, this conversion should be in my preprocessing step), and then temporarily 
-            uploaded into an S3 bucket for further processing on different nodes. Facial recognition pipelines are multi-stage, meaning that multiple models 
-            are used in series for these tasks. As an example; before we are 
-            able to classify the gender of a face, we first need to extract a bounding box of the face from the image (in my case, such artefacts are a 
-            resolution corrected image, and an extracted face...). While classification of a face IS possible
-            without face extraction, it adds useless noise (information irrelevant to the task) to the classification input, which deteriorates the 
-            performance of the classification model.
+            uploaded into an S3 bucket for further processing on different nodes. Since facial recognition pipelines are multi stage, I attempt to split
+            up processing steps into individual microservices.
           </li>
           <li class="mt-4">
-            2. After the image is available in my S3 'feature store', the middleware triggers a call to the preprocessing service.
-            All of the internal communications is handled via gRPC. gRPC is a communications protocol specifically made for in-datacenter 
-            use. It is comparable to something like REST, except it is stricter (requires interface definition files) and more performant.
+            2. After the image is available in S3, the middleware triggers a call to the preprocessing service.
+            All of the internal communications is handled via gRPC.           
           </li>
           <li class="mt-4">
-            3. The preprocessing service downloads the image from S3, and then performs processing required to transform the image into a 1024x1024 format
-            which my face extraction model expects. The processing applied include re-scaling, and then padding of black pixels to the desired width and height.
-            The processed image is then uploaded to S3. The 1024x1024 shape is an arbitrary shape I decided on after compiling my models with the AWS Neuron compiler,
-            compilation produces a model with restricted input sizing to most effectively take advantage of hardware-specific  optimizations. I had thought about 
+            3. The preprocessing service downloads the image from S3, and then rescales, and pads the image into a 1024x1024 format
+            which my face extraction model expects. 
+            The processed image is then uploaded to S3. The 1024x1024 shape is an arbitrary shape I decided on after compiling my models with the AWS Neuron compiler.
+            Compilation produces a model with restricted input sizing to most effectively take advantage of hardware-specific  optimizations. I had thought about 
             compiling 
             my facial detection model multiple times for different input sizes, and then using a bucketing technique (images of size A use precompiled model X,
             while images of size B use precompiled model Y...) 
@@ -484,13 +488,13 @@
           </li>
           <li class="mt-4">
             4. After the preprocessed image is available, the middleware triggers multiple inference calls (in parallel) to the model servers. The model servers
-            pull down the processed image artefacts from S3, and then run their models on them. There are currently 6 different models that run: face extraction, 
+            pull down the preprocessed images from S3, and then run their models on them. There are currently 6 different models that run: face extraction, 
             face embedding, emotion classification, age classification, race classification and gender classification.
             However, they are inefficiently distributed across two different inference nodes because I am limited by time (and money!). Currently, 
             face extraction actually runs twice. Once in the embedding model servers, and once in the facial analysis model servers. 
-            With 3 inference nodes, I would add a face extraction similar to the preprocessing step which produces an extracted face artefact, store it in S3.
-            This artefact could then be pulled down for use by all the previously mentioned models, allowing higher efficiency and scalability. 
-            With 6 inference nodes, every model would get its own server, and re-use the face extraction artefact.
+            With 3 inference nodes, I would add a face extraction similar to the preprocessing step which produces an extracted face image and stores it in S3.
+            This image could then be pulled down for use by all the previously mentioned models, allowing more effective resource re-use. 
+            With 6 inference nodes, every model would get its own server, and re-use the face extraction image.
           </li>
           <li class="mt-4">
             5. As soon as the embedding is available, it is used to query the vector database for similar faces. This database
