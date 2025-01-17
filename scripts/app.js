@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     uploadLabel.classList.remove("border-teal-400");
   });
 
-  imageInput.addEventListener("drop", (event) => {
+  uploadLabel.addEventListener("drop", (event) => {
     event.preventDefault();
     imageInput.classList.remove("border-teal-400");
     const files = event.dataTransfer.files;
