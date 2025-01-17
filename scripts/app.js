@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const uploadForm = document.getElementById("upload-form");
   const imageInput = document.getElementById("image-upload");
   const imagePreview = document.getElementById("image-preview");
+  const errorMessage = document.getElementById("error-message");
 
   const age = document.getElementById("age-result");
   const gender = document.getElementById("gender-result");
@@ -166,6 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updatePreview(imageURL) {
+    errorMessage.textContent = "";
+    clearOutlines();
     imagePreview.style.backgroundImage = `url("${imageURL}")`;
     imagePreview.classList.add("bg-cover", "bg-center");
   }
@@ -180,6 +183,22 @@ document.addEventListener("DOMContentLoaded", () => {
     gender.textContent = attributes.gender ?? "--";
     emotion.textContent = attributes.emotion ?? "--";
     race.textContent = attributes.race ?? "--";
+  }
+
+  function clearOutlines() {
+    const oldOutline = document.getElementById("face-outline");
+    const oldLeftEyeOutline = document.getElementById("left-eye-outline");
+    const oldRightEyeOutline = document.getElementById("right-eye-outline");
+
+    if (oldOutline) {
+      oldOutline.remove();
+    }
+    if (oldLeftEyeOutline) {
+      oldLeftEyeOutline.remove();
+    }
+    if (oldRightEyeOutline) {
+      oldRightEyeOutline.remove();
+    }
   }
 
   function drawFaceOutline(facialArea, originalWidth, originalHeight) {
@@ -202,19 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const rightEyeY = facialArea.right_eye.y * scaleY;
 
     // Remove an old outline if present
-    const oldOutline = document.getElementById("face-outline");
-    const oldLeftEyeOutline = document.getElementById("left-eye-outline");
-    const oldRightEyeOutline = document.getElementById("right-eye-outline");
-
-    if (oldOutline) {
-      oldOutline.remove();
-    }
-    if (oldLeftEyeOutline) {
-      oldLeftEyeOutline.remove();
-    }
-    if (oldRightEyeOutline) {
-      oldRightEyeOutline.remove();
-    }
 
     // Create the new outline <div>
     const faceOutline = document.createElement("div");
@@ -273,6 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function uploadImage(file) {
     const imageUrl = URL.createObjectURL(file);
+
+    clearOutlines();
     updatePreview(imageUrl);
 
     const formData = new FormData();
@@ -294,7 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         responseJson = await response.json();
-
         celebrities = responseJson["similar_urls"];
         facialArea = responseJson["facial_area"];
         attributes = responseJson["analysis"];
@@ -302,10 +309,11 @@ document.addEventListener("DOMContentLoaded", () => {
         drawFaceOutline(facialArea, w, h);
         populateFaceAttributes(attributes);
 
-        console.log(celebrities);
         populateResults(celebrities);
       } else {
-        console.log("error with response");
+        const errorText = await response.text();
+        imagePreview.style.backgroundImage = ``;
+        errorMessage.textContent = errorText;
       }
     };
   }
