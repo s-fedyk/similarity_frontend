@@ -20,19 +20,19 @@
       class="w-full max-w-2xl bg-gray-800 p-4 sm:p-6 rounded-md leading-relaxed mb-4 sm:mb-6"
     >
       <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
-        Service Notice
+        Instructions
       </h2>
-      <p class="mb-3 sm:mb-4">
-        Development scheduled for 7pm-1am MST daily, expect outages.
+      <p class="mb-4">
+        Drag and drop an image from your favorite social media, or click to
+        upload
       </p>
-      <p class="mb-3 sm:mb-4">
-        The app is currently about 20x slower than it should be. I am waiting on
-        AWS to allocate more resources to me.
-      </p>
-      <p class="mb-3 sm:mb-4">
-        Only PNG and JPEG are currently supported. Other filetypes are not
-        handled yet .
-      </p>
+      <div class="gif-container">
+        <img
+          src="http://similarfaces2.me/example.gif"
+          alt="Example GIF"
+          class="max-w-full h-auto rounded-md"
+        />
+      </div>
     </div>
     <button
       id="random-image-btn"
@@ -98,20 +98,120 @@
         <div class="bg-gray-700 p-4 rounded-md text-center">
           <h3 class="text-lg font-bold mb-2">Age</h3>
           <p id="age-result" class="text-teal-400 text-xl break-words">--</p>
+          <div
+            id="age-spinner"
+            class="bg-gray-700 bg-opacity-10 flex items-center justify-center rounded-md hidden"
+          >
+            <svg
+              class="animate-spin h-8 w-8 text-teal-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+              ></path>
+            </svg>
+          </div>
         </div>
         <div class="bg-gray-700 p-4 rounded-md text-center">
           <h3 class="text-lg font-bold mb-2">Gender</h3>
           <p id="gender-result" class="text-teal-400 text-xl break-words">--</p>
+          <div
+            id="gender-spinner"
+            class="bg-gray-700 bg-opacity-10 flex items-center justify-center rounded-md hidden"
+          >
+            <svg
+              class="animate-spin h-8 w-8 text-teal-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+              ></path>
+            </svg>
+          </div>
         </div>
         <div class="bg-gray-700 p-4 rounded-md text-center">
           <h3 class="text-lg font-bold mb-2">Emotion</h3>
           <p id="emotion-result" class="text-teal-400 text-xl break-words">
             --
           </p>
+          <div
+            id="emotion-spinner"
+            class="bg-gray-700 bg-opacity-10 flex items-center justify-center rounded-md hidden"
+          >
+            <svg
+              class="animate-spin h-8 w-8 text-teal-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+              ></path>
+            </svg>
+          </div>
         </div>
         <div class="bg-gray-700 p-4 rounded-md text-center">
           <h3 class="text-lg font-bold mb-2">Race</h3>
           <p id="race-result" class="text-teal-400 text-xl break-words">--</p>
+          <div
+            id="race-spinner"
+            class="bg-gray-700 bg-opacity-10 flex items-center justify-center rounded-md hidden"
+          >
+            <svg
+              class="animate-spin h-8 w-8 text-teal-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+              ></path>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -245,11 +345,8 @@
         <p class="mb-3 sm:mb-4">
           Recently I was looking for projects to build to show off my technical
           expertise, I wanted something that was relatively compute intensive
-          because results are impressive when they are fast. Online, I came
-          across sites online offering similar features, except they were
-          awfully slow. This inspired me to build something that is hopefully
-          much faster, offers equally good face recognition features, and is not
-          plastered with ads.
+          because results are impressive when they are fast. Comparatively, most
+          sites that offer similar features to this one are much slower.
         </p>
         <p class="mb-3 sm:mb-4">
           There is zero caching of results in this application. Every inference

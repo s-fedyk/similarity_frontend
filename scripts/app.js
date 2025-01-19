@@ -169,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updatePreview(imageURL) {
     errorMessage.textContent = "";
     clearOutlines();
+    clearAnalysis();
     imagePreview.style.backgroundImage = `url("${imageURL}")`;
     imagePreview.classList.add("bg-cover", "bg-center");
   }
@@ -199,6 +200,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (oldRightEyeOutline) {
       oldRightEyeOutline.remove();
     }
+  }
+  function clearAnalysis() {
+    const age = document.getElementById("age-result");
+    const gender = document.getElementById("gender-result");
+    const emotion = document.getElementById("emotion-result");
+    const race = document.getElementById("race-result");
+
+    age.textContent = "--";
+    gender.textContent = "--";
+    emotion.textContent = "--";
+    race.textContent = "--";
   }
 
   function drawFaceOutline(facialArea, originalWidth, originalHeight) {
@@ -281,6 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageUrl = URL.createObjectURL(file);
 
     clearOutlines();
+    clearAnalysis();
     updatePreview(imageUrl);
 
     const formData = new FormData();
@@ -305,16 +318,58 @@ document.addEventListener("DOMContentLoaded", () => {
         celebrities = responseJson["similar_urls"];
         facialArea = responseJson["facial_area"];
         attributes = responseJson["analysis"];
+        jobID = responseJson["job_id"];
 
         drawFaceOutline(facialArea, w, h);
-        populateFaceAttributes(attributes);
-
         populateResults(celebrities);
+        pollSingleAnalysis(jobID, "gender");
+        pollSingleAnalysis(jobID, "age");
+        pollSingleAnalysis(jobID, "emotion");
+        pollSingleAnalysis(jobID, "race");
       } else {
         const errorText = await response.text();
         imagePreview.style.backgroundImage = ``;
         errorMessage.textContent = errorText;
       }
     };
+  }
+
+  function pollSingleAnalysis(baseJobID, field) {
+    const subJobID = `${baseJobID}-${field}`;
+    const resultText = document.getElementById(`${field}-result`);
+    resultText.classList.add("hidden");
+
+    const spinnerEl = document.getElementById(`${field}-spinner`);
+    if (spinnerEl) {
+      spinnerEl.classList.remove("hidden"); // show the spinner
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(
+          `http://api.similarfaces2.me/checkJob?jobID=${subJobID}`,
+        );
+        if (!res.ok) {
+          console.error(`Failed to fetch job status for ${subJobID}`);
+          return;
+        }
+
+        const data = await res.json();
+        console.log(`Polling field '${field}':`, data);
+
+        if (data.result === "--") {
+        } else if (data.result) {
+          document.getElementById(`${field}-result`).textContent = data.result;
+
+          if (spinnerEl) {
+            spinnerEl.classList.add("hidden");
+          }
+          resultText.classList.remove("hidden");
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("Error polling job status:", err);
+      }
+    }, 300);
   }
 });
